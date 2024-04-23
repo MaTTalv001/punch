@@ -1,67 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import useDeviceMotion from './useDeviceMotion';
 
 function App() {
-  const [maxAcceleration, setMaxAcceleration] = useState(0);
-  const [isRecording, setIsRecording] = useState(false);
-  const [timer, setTimer] = useState(null);
+    const { motion, requestPermission } = useDeviceMotion();
+    const [maxPunchPower, setMaxPunchPower] = useState(0);
 
-  // デバイスモーションのイベントハンドラ
-  const handleMotionEvent = (event) => {
-    const acceleration = event.accelerationIncludingGravity;
-    const totalAcceleration = Math.sqrt(acceleration.x ** 2 + acceleration.y ** 2 + acceleration.z ** 2);
-    if (totalAcceleration > maxAcceleration) {
-      setMaxAcceleration(totalAcceleration); // ここで最大値を更新
-    }
-  };
-
-  // 許可を求める関数
-  const requestPermission = () => {
-    if (typeof DeviceMotionEvent.requestPermission === 'function') {
-      DeviceMotionEvent.requestPermission()
-        .then(permissionState => {
-          if (permissionState === 'granted') {
-            startRecording();
-          } else {
-            alert('Permission not granted');
-          }
-        })
-        .catch(console.error);
-    } else {
-      alert('DeviceMotionEvent.requestPermission is not supported on your device.');
-    }
-  };
-
-  // 録音を開始する関数
-  const startRecording = () => {
-    setIsRecording(true);
-    setMaxAcceleration(0); // 記録開始前に最大値をリセット
-    window.addEventListener('devicemotion', handleMotionEvent);
-    const newTimer = setTimeout(() => {
-      window.removeEventListener('devicemotion', handleMotionEvent);
-      setIsRecording(false);
-      // タイマー終了時に直接最大値を使用するのではなく、その時点の最大値をアラートで表示
-      alert(`Recording stopped. Max acceleration: ${maxAcceleration.toFixed(2)} m/s²`);
-      setTimer(null);
-    }, 5000); // 5秒後に記録を停止
-    setTimer(newTimer);
-  };
-
-  // コンポーネントのアンマウント時にクリーンアップ
-  useEffect(() => {
-    return () => {
-      if (timer) clearTimeout(timer);
-      window.removeEventListener('devicemotion', handleMotionEvent);
+    const calculatePunchPower = () => {
+        const currentPower = Math.sqrt(motion.x ** 2 + motion.y ** 2 + motion.z ** 2);
+        if (currentPower > maxPunchPower) {
+            setMaxPunchPower(currentPower);
+        }
     };
-  }, [timer]);
 
-  return (
-    <div>
-      <h1>パンチ力測定</h1>
-      {!isRecording && <button onClick={requestPermission}>Start</button>}
-      {isRecording && <p>Recording...</p>}
-      <p>Max acceleration recorded: {maxAcceleration.toFixed(2)} m/s²</p>
-    </div>
-  );
+    return (
+        <div>
+            <h1>パンチ力測定</h1>
+            <button onClick={() => { requestPermission(); calculatePunchPower(); }}>Enable Device Motion</button>
+            <p>X軸の加速度: {motion.x || 'Not available'}</p>
+            <p>Y軸の加速度: {motion.y || 'Not available'}</p>
+            <p>Z軸の加速度: {motion.z || 'Not available'}</p>
+            <p>最大パンチ力: {maxPunchPower.toFixed(2) || 'Not available'}</p>
+        </div>
+    );
 }
 
 export default App;
+
