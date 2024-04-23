@@ -6,26 +6,26 @@ function App() {
     const [maxPunchPower, setMaxPunchPower] = useState(0);
     const [measurements, setMeasurements] = useState([]);
     const [isMeasuring, setIsMeasuring] = useState(false);
-    const [timer, setTimer] = useState(null);
 
     useEffect(() => {
+        let interval;
         if (isMeasuring) {
-            const interval = setInterval(() => {
-                calculatePunchPower();
-            }, 100); // 0.1秒ごとにパンチ力を計算
-            setTimer(interval);
-        } else {
-            clearInterval(timer);
+            interval = setInterval(() => {
+                const currentPower = Math.sqrt(motion.x ** 2 + motion.y ** 2 + motion.z ** 2);
+                if (currentPower > maxPunchPower) {
+                    setMaxPunchPower(currentPower);
+                }
+            }, 100); // 0.1秒ごとにパンチ力を更新
         }
-        return () => clearInterval(timer);
-    }, [isMeasuring, timer]);
 
-    const calculatePunchPower = () => {
-        const currentPower = Math.sqrt(motion.x ** 2 + motion.y ** 2 + motion.z ** 2);
-        if (currentPower > maxPunchPower) {
-            setMaxPunchPower(currentPower);
-        }
-    };
+        return () => {
+            clearInterval(interval);
+            if (isMeasuring) {
+                setMeasurements(measurements => [...measurements, maxPunchPower]); // 測定が終了したら測定値を保存
+                setIsMeasuring(false);
+            }
+        };
+    }, [isMeasuring, motion.x, motion.y, motion.z, maxPunchPower]);
 
     const startMeasurement = () => {
         if (measurements.length >= 3) {
@@ -36,7 +36,6 @@ function App() {
         setIsMeasuring(true); // 測定開始
         setTimeout(() => {
             setIsMeasuring(false); // 10秒後に測定終了
-            setMeasurements([...measurements, maxPunchPower]); // 測定値を保存
         }, 10000);
     };
 
@@ -60,5 +59,3 @@ function App() {
 }
 
 export default App;
-
-
