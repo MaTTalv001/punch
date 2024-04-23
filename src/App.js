@@ -1,25 +1,18 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import useDeviceMotion from './useDeviceMotion';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const motion = useDeviceMotion();
+
+    return (
+        <div>
+            <h1>パンチ力測定</h1>
+            <p>X軸の加速度: {motion.x}</p>
+            <p>Y軸の加速度: {motion.y}</p>
+            <p>Z軸の加速度: {motion.z}</p>
+        </div>
+    );
 }
 
 export default App;
+
