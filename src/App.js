@@ -1,31 +1,31 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 function App() {
   const [maxAcceleration, setMaxAcceleration] = useState(0);
   const [isRecording, setIsRecording] = useState(false);
   const [count, setCount] = useState(0);
-  const [canCount, setCanCount] = useState(true);
+  const canCount = useRef(true); // canCount を useRef で管理
   const [timer, setTimer] = useState(null);
 
   // デバイスモーションのイベントハンドラ
   const handleMotionEvent = (event) => {
     const acceleration = event.accelerationIncludingGravity;
     const totalAcceleration = Math.sqrt(acceleration.x ** 2 + acceleration.y ** 2 + acceleration.z ** 2);
-    
+
     // 最大加速度を更新
     if (totalAcceleration > maxAcceleration) {
       setMaxAcceleration(totalAcceleration);
     }
 
     // 加速度が40を超えた時の処理
-    if (totalAcceleration > 40 && canCount) {
+    if (totalAcceleration > 40 && canCount.current) {
       setCount(count => count + 1);
-      setCanCount(false); // 20になるまでカウント停止
+      canCount.current = false; // useRefを使って値を更新
     }
 
     // 加速度が20以下になった時に再びカウント可能に
-    if (totalAcceleration <= 20 && !canCount) {
-      setCanCount(true);
+    if (totalAcceleration <= 20 && !canCount.current) {
+      canCount.current = true;
     }
   };
 
@@ -49,7 +49,7 @@ function App() {
     setIsRecording(true);
     setMaxAcceleration(0);
     setCount(0); // カウントリセット
-    setCanCount(true); // カウント可能フラグリセット
+    canCount.current = true; // useRefを使ってフラグをリセット
     window.addEventListener('devicemotion', handleMotionEvent);
     const newTimer = setTimeout(() => {
       window.removeEventListener('devicemotion', handleMotionEvent);
