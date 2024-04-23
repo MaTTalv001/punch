@@ -6,27 +6,26 @@ function App() {
     const [maxPunchPower, setMaxPunchPower] = useState(0);
     const [measurements, setMeasurements] = useState([]);
     const [isMeasuring, setIsMeasuring] = useState(false);
+    const [measurementInterval, setMeasurementInterval] = useState(null);
 
     useEffect(() => {
-        let interval;
         if (isMeasuring) {
-            interval = setInterval(() => {
+            const interval = setInterval(() => {
                 const currentPower = Math.sqrt(motion.x ** 2 + motion.y ** 2 + motion.z ** 2);
-                setMaxPunchPower(max => Math.max(max, currentPower)); // 最大値を更新
+                if (currentPower > maxPunchPower) {
+                    setMaxPunchPower(currentPower);
+                }
             }, 100); // 0.1秒ごとにパンチ力を更新
+            setMeasurementInterval(interval);
+        } else {
+            clearInterval(measurementInterval);
+            setMeasurementInterval(null);
+            if (maxPunchPower > 0) {
+                setMeasurements(prev => [...prev, maxPunchPower]);
+                setMaxPunchPower(0); // 最大パンチ力をリセット
+            }
         }
-
-        return () => {
-            clearInterval(interval); // インターバルをクリア
-        };
     }, [isMeasuring, motion.x, motion.y, motion.z]);
-
-    useEffect(() => {
-        if (!isMeasuring && measurements.length < 3 && maxPunchPower > 0) {
-            setMeasurements(prev => [...prev, maxPunchPower]); // 測定終了後に記録
-            setMaxPunchPower(0); // 最大パンチ力をリセット
-        }
-    }, [isMeasuring, maxPunchPower]);
 
     const startMeasurement = () => {
         if (measurements.length >= 3) {
