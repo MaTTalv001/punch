@@ -2,21 +2,33 @@ import React, { useState, useEffect } from 'react';
 
 function App() {
   const [maxAcceleration, setMaxAcceleration] = useState(0);
-  const [currentAcceleration, setCurrentAcceleration] = useState(0);
   const [isRecording, setIsRecording] = useState(false);
+  const [count, setCount] = useState(0);
+  const [canCount, setCanCount] = useState(true);
   const [timer, setTimer] = useState(null);
 
   // デバイスモーションのイベントハンドラ
   const handleMotionEvent = (event) => {
     const acceleration = event.accelerationIncludingGravity;
     const totalAcceleration = Math.sqrt(acceleration.x ** 2 + acceleration.y ** 2 + acceleration.z ** 2);
-    setCurrentAcceleration(totalAcceleration);
+    
+    // 最大加速度を更新
     if (totalAcceleration > maxAcceleration) {
       setMaxAcceleration(totalAcceleration);
     }
+
+    // 加速度が40を超えた時の処理
+    if (totalAcceleration > 40 && canCount) {
+      setCount(count => count + 1);
+      setCanCount(false); // 20になるまでカウント停止
+    }
+
+    // 加速度が20以下になった時に再びカウント可能に
+    if (totalAcceleration <= 20 && !canCount) {
+      setCanCount(true);
+    }
   };
 
-  // 許可を求める関数
   const requestPermission = () => {
     if (typeof DeviceMotionEvent.requestPermission === 'function') {
       DeviceMotionEvent.requestPermission()
@@ -33,20 +45,21 @@ function App() {
     }
   };
 
-  // 録音を開始する関数
   const startRecording = () => {
     setIsRecording(true);
     setMaxAcceleration(0);
+    setCount(0); // カウントリセット
+    setCanCount(true); // カウント可能フラグリセット
     window.addEventListener('devicemotion', handleMotionEvent);
     const newTimer = setTimeout(() => {
       window.removeEventListener('devicemotion', handleMotionEvent);
       setIsRecording(false);
-      alert(`Recording stopped. Max acceleration: ${maxAcceleration.toFixed(2)} m/s²`);
-    }, 5000); // 5秒後に記録を停止
+      alert(`Recording stopped. Max acceleration: ${maxAcceleration.toFixed(2)} m/s². Count: ${count}`);
+      setTimer(null);
+    }, 5000);
     setTimer(newTimer);
   };
 
-  // コンポーネントのアンマウント時にクリーンアップ
   useEffect(() => {
     return () => {
       if (timer) clearTimeout(timer);
@@ -58,8 +71,9 @@ function App() {
     <div>
       <h1>パンチ力測定</h1>
       {!isRecording && <button onClick={requestPermission}>Start</button>}
-      {isRecording && <p>Recording... Current acceleration: {currentAcceleration.toFixed(2)} m/s²</p>}
+      {isRecording && <p>Recording...</p>}
       <p>Max acceleration recorded: {maxAcceleration.toFixed(2)} m/s²</p>
+      <p>Count over 40: {count}</p>
     </div>
   );
 }
