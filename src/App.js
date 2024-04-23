@@ -6,6 +6,7 @@ function App() {
     const [maxPunchPower, setMaxPunchPower] = useState(0);
     const [measurements, setMeasurements] = useState([]);
     const [isMeasuring, setIsMeasuring] = useState(false);
+    const [measurementInterval, setMeasurementInterval] = useState(null);
 
     useEffect(() => {
         if (isMeasuring) {
@@ -15,16 +16,16 @@ function App() {
                     setMaxPunchPower(currentPower);
                 }
             }, 100); // 0.1秒ごとにパンチ力を更新
-            return () => clearInterval(interval); // 測定が停止したらインターバルをクリア
+            setMeasurementInterval(interval);
+        } else {
+            clearInterval(measurementInterval);
+            setMeasurementInterval(null);
+            if (maxPunchPower > 0) {
+                setMeasurements(prev => [...prev, maxPunchPower]);
+                setMaxPunchPower(0); // 最大パンチ力をリセット
+            }
         }
-    }, [isMeasuring, motion.x, motion.y, motion.z, maxPunchPower]);
-
-    useEffect(() => {
-        if (!isMeasuring && measurements.length < 3 && maxPunchPower > 0) {
-            setMeasurements(prev => [...prev, maxPunchPower]); // 測定が終了したら最大値を記録
-            setMaxPunchPower(0); // 最大パンチ力をリセット
-        }
-    }, [isMeasuring, maxPunchPower]);
+    }, [isMeasuring, motion.x, motion.y, motion.z, measurementInterval, maxPunchPower]);
 
     const startMeasurement = () => {
         if (measurements.length >= 3) {
@@ -43,7 +44,7 @@ function App() {
         <div>
             <h1>パンチ力測定</h1>
             <button onClick={requestPermission}>Enable Device Motion</button>
-            <button onClick={startMeasurement} disabled={isMeasuring || measurements.length >= 3}>計測開始</button>
+            <button onClick={startMeasurement} disabled={isMeasuring}>計測開始</button>
             <p>X軸の加速度: {motion.x?.toFixed(2) || 'Not available'}</p>
             <p>Y軸の加速度: {motion.y?.toFixed(2) || 'Not available'}</p>
             <p>Z軸の加速度: {motion.z?.toFixed(2) || 'Not available'}</p>
@@ -57,3 +58,4 @@ function App() {
 }
 
 export default App;
+
