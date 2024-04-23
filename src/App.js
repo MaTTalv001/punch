@@ -1,34 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function App() {
   const [maxAcceleration, setMaxAcceleration] = useState(0);
   const [isRecording, setIsRecording] = useState(false);
-  const [count, setCount] = useState(0);
-  const canCount = useRef(true); // canCount を useRef で管理
   const [timer, setTimer] = useState(null);
 
   // デバイスモーションのイベントハンドラ
   const handleMotionEvent = (event) => {
     const acceleration = event.accelerationIncludingGravity;
     const totalAcceleration = Math.sqrt(acceleration.x ** 2 + acceleration.y ** 2 + acceleration.z ** 2);
-
-    // 最大加速度を更新
     if (totalAcceleration > maxAcceleration) {
-      setMaxAcceleration(totalAcceleration);
-    }
-
-    // 加速度が40を超えた時の処理
-    if (totalAcceleration > 40 && canCount.current) {
-      setCount(count => count + 1);
-      canCount.current = false; // useRefを使って値を更新
-    }
-
-    // 加速度が20以下になった時に再びカウント可能に
-    if (totalAcceleration <= 20 && !canCount.current) {
-      canCount.current = true;
+      setMaxAcceleration(totalAcceleration); // ここで最大値を更新
     }
   };
 
+  // 許可を求める関数
   const requestPermission = () => {
     if (typeof DeviceMotionEvent.requestPermission === 'function') {
       DeviceMotionEvent.requestPermission()
@@ -45,21 +31,22 @@ function App() {
     }
   };
 
+  // 録音を開始する関数
   const startRecording = () => {
     setIsRecording(true);
-    setMaxAcceleration(0);
-    setCount(0); // カウントリセット
-    canCount.current = true; // useRefを使ってフラグをリセット
+    setMaxAcceleration(0); // 記録開始前に最大値をリセット
     window.addEventListener('devicemotion', handleMotionEvent);
     const newTimer = setTimeout(() => {
       window.removeEventListener('devicemotion', handleMotionEvent);
       setIsRecording(false);
-      alert(`Recording stopped. Max acceleration: ${maxAcceleration.toFixed(2)} m/s². Count: ${count}`);
+      // タイマー終了時に直接最大値を使用するのではなく、その時点の最大値をアラートで表示
+      alert(`Recording stopped. Max acceleration: ${maxAcceleration.toFixed(2)} m/s²`);
       setTimer(null);
-    }, 5000);
+    }, 5000); // 5秒後に記録を停止
     setTimer(newTimer);
   };
 
+  // コンポーネントのアンマウント時にクリーンアップ
   useEffect(() => {
     return () => {
       if (timer) clearTimeout(timer);
@@ -73,7 +60,6 @@ function App() {
       {!isRecording && <button onClick={requestPermission}>Start</button>}
       {isRecording && <p>Recording...</p>}
       <p>Max acceleration recorded: {maxAcceleration.toFixed(2)} m/s²</p>
-      <p>Count over 40: {count}</p>
     </div>
   );
 }
