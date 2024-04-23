@@ -12,27 +12,27 @@ function App() {
         if (isMeasuring) {
             interval = setInterval(() => {
                 const currentPower = Math.sqrt(motion.x ** 2 + motion.y ** 2 + motion.z ** 2);
-                if (currentPower > maxPunchPower) {
-                    setMaxPunchPower(currentPower);
-                }
+                setMaxPunchPower(max => Math.max(max, currentPower)); // 最大値を更新
             }, 100); // 0.1秒ごとにパンチ力を更新
         }
 
         return () => {
-            clearInterval(interval);
-            if (isMeasuring) {
-                setMeasurements(measurements => [...measurements, maxPunchPower]); // 測定が終了したら測定値を保存
-                setIsMeasuring(false);
-            }
+            clearInterval(interval); // インターバルをクリア
         };
-    }, [isMeasuring, motion.x, motion.y, motion.z, maxPunchPower]);
+    }, [isMeasuring, motion.x, motion.y, motion.z]);
+
+    useEffect(() => {
+        if (!isMeasuring && measurements.length < 3 && maxPunchPower > 0) {
+            setMeasurements(prev => [...prev, maxPunchPower]); // 測定終了後に記録
+            setMaxPunchPower(0); // 最大パンチ力をリセット
+        }
+    }, [isMeasuring, maxPunchPower]);
 
     const startMeasurement = () => {
         if (measurements.length >= 3) {
             alert("3回の測定が完了しました。");
             return;
         }
-        setMaxPunchPower(0); // 最大パンチ力をリセット
         setIsMeasuring(true); // 測定開始
         setTimeout(() => {
             setIsMeasuring(false); // 10秒後に測定終了
