@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 function App() {
   const [maxAcceleration, setMaxAcceleration] = useState(0);
+  const [currentAcceleration, setCurrentAcceleration] = useState(0);
   const [isRecording, setIsRecording] = useState(false);
   const [timer, setTimer] = useState(null);
 
@@ -9,8 +10,9 @@ function App() {
   const handleMotionEvent = (event) => {
     const acceleration = event.accelerationIncludingGravity;
     const totalAcceleration = Math.sqrt(acceleration.x ** 2 + acceleration.y ** 2 + acceleration.z ** 2);
+    setCurrentAcceleration(totalAcceleration);
     if (totalAcceleration > maxAcceleration) {
-      setMaxAcceleration(totalAcceleration); // ここで最大値を更新
+      setMaxAcceleration(totalAcceleration);
     }
   };
 
@@ -34,14 +36,12 @@ function App() {
   // 録音を開始する関数
   const startRecording = () => {
     setIsRecording(true);
-    setMaxAcceleration(0); // 記録開始前に最大値をリセット
+    setMaxAcceleration(0);
     window.addEventListener('devicemotion', handleMotionEvent);
     const newTimer = setTimeout(() => {
       window.removeEventListener('devicemotion', handleMotionEvent);
       setIsRecording(false);
-      // タイマー終了時に直接最大値を使用するのではなく、その時点の最大値をアラートで表示
       alert(`Recording stopped. Max acceleration: ${maxAcceleration.toFixed(2)} m/s²`);
-      setTimer(null);
     }, 5000); // 5秒後に記録を停止
     setTimer(newTimer);
   };
@@ -58,7 +58,7 @@ function App() {
     <div>
       <h1>パンチ力測定</h1>
       {!isRecording && <button onClick={requestPermission}>Start</button>}
-      {isRecording && <p>Recording...</p>}
+      {isRecording && <p>Recording... Current acceleration: {currentAcceleration.toFixed(2)} m/s²</p>}
       <p>Max acceleration recorded: {maxAcceleration.toFixed(2)} m/s²</p>
     </div>
   );
