@@ -25,7 +25,7 @@ function App() {
                 setMaxPunchPower(0); // 最大パンチ力をリセット
             }
         }
-    }, [isMeasuring, motion.x, motion.y, motion.z]);
+    }, [isMeasuring, motion.x, motion.y, motion.z, measurementInterval, maxPunchPower]);
 
     const startMeasurement = () => {
         if (measurements.length >= 3) {
@@ -58,3 +58,4 @@ function App() {
 }
 
 export default App;
+
