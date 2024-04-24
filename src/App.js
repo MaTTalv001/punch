@@ -24,17 +24,18 @@ function App() {
 
             return () => clearInterval(interval);
         }
-    }, [isMeasuring, motion]);
+    }, [isMeasuring, motion.x, motion.y, motion.z]);  // motionの各成分を依存配列に明示的に加える
 
     const startMeasurement = () => {
-        setIsMeasuring(true);
-        setTimeout(() => setIsMeasuring(false), 10000); // 10秒後に計測を停止
+        requestPermission().then(() => {  // パーミッション要求の結果を確認
+            setIsMeasuring(true);
+            setTimeout(() => setIsMeasuring(false), 10000); // 10秒後に計測を停止
+        }).catch(console.error);
     };
 
     return (
         <div>
             <h1>パンチ速度測定</h1>
-            <button onClick={requestPermission}>Enable Device Motion</button>
             <button onClick={startMeasurement} disabled={isMeasuring}>計測開始</button>
             <p>X軸の速度: {velocity.x.toFixed(2)} m/s</p>
             <p>Y軸の速度: {velocity.y.toFixed(2)} m/s</p>
@@ -44,5 +45,6 @@ function App() {
 }
 
 export default App;
+
 
 
