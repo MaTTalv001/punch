@@ -1,50 +1,63 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import useDeviceMotion from './useDeviceMotion';
 
 function App() {
     const { motion, requestPermission } = useDeviceMotion();
-    const [velocity, setVelocity] = useState({ x: 0, y: 0, z: 0 });
-    const [isMeasuring, setIsMeasuring] = useState(false);
+    const [maxPowers, setMaxPowers] = useState([0, 0, 0]);
+    const [isMeasuring, setIsMeasuring] = useState([false, false, false]);
+    const [velocities, setVelocities] = useState([0, 0, 0]); // 各セットの速度を保持するステート
 
-    useEffect(() => {
-        let lastTime = Date.now();
+    const startMeasurement = (index) => {
+        if (isMeasuring[index]) return;
 
-        if (isMeasuring) {
-            const interval = setInterval(() => {
-                const currentTime = Date.now();
-                const dt = (currentTime - lastTime) / 1000.0; // 秒単位で時間間隔を計算
-                lastTime = currentTime;
+        let maxPunchPower = 0;
+        let velocity = 0; // 速度の初期値
+        setIsMeasuring(prev => prev.map((item, idx) => idx === index ? true : item));
 
-                setVelocity(vel => ({
-                    x: vel.x + motion.x * dt,
-                    y: vel.y + motion.y * dt,
-                    z: vel.z + motion.z * dt
-                }));
-            }, 100);
+        const interval = setInterval(() => {
+            const currentPower = Math.sqrt(motion.x ** 2 + motion.y ** 2 + motion.z ** 2);
+            const currentTime = Date.now();
+            const dt = (currentTime - velocities[index]) / 1000.0; // 前回からの時間差分
+            velocity += currentPower * dt; // 速度は加速度に時間を掛けたものを積算
+            setVelocities(prev => prev.map((item, idx) => idx === index ? currentTime : item));
 
-            return () => clearInterval(interval);
-        }
-    }, [isMeasuring, motion.x, motion.y, motion.z]);  // motionの各成分を依存配列に明示的に加える
+            if (velocity > maxPunchPower) {
+                maxPunchPower = velocity;
+            }
+        }, 100);
 
-    const startMeasurement = () => {
-        requestPermission().then(() => {  // パーミッション要求の結果を確認
-            setIsMeasuring(true);
-            setTimeout(() => setIsMeasuring(false), 10000); // 10秒後に計測を停止
-        }).catch(console.error);
+        setTimeout(() => {
+            clearInterval(interval);
+            setIsMeasuring(prev => prev.map((item, idx) => idx === index ? false : item));
+            setMaxPowers(prev => prev.map((item, idx) => idx === index ? maxPunchPower : item));
+        }, 10000);
     };
+
+    const totalPower = maxPowers.reduce((acc, val) => acc + val, 0);
 
     return (
         <div>
-            <h1>パンチ速度測定</h1>
-            <button onClick={startMeasurement} disabled={isMeasuring}>計測開始</button>
-            <p>X軸の速度: {velocity.x.toFixed(2)} m/s</p>
-            <p>Y軸の速度: {velocity.y.toFixed(2)} m/s</p>
-            <p>Z軸の速度: {velocity.z.toFixed(2)} m/s</p>
+            <h1>パンチ力測定</h1>
+            <button onClick={requestPermission}>Enable Device Motion</button>
+            {maxPowers.map((power, index) => (
+                <div key={index}>
+                    <button onClick={() => startMeasurement(index)} disabled={isMeasuring[index]}>
+                        {`計測開始 ${index + 1}`}
+                    </button>
+                    <p>{`セット ${index + 1} の最大パンチ力: ${power.toFixed(2)}`}</p>
+                </div>
+            ))}
+            <p>X軸の加速度: {motion.x?.toFixed(2) || 'Not available'}</p>
+            <p>Y軸の加速度: {motion.y?.toFixed(2) || 'Not available'}</p>
+            <p>Z軸の加速度: {motion.z?.toFixed(2) || 'Not available'}</p>
+            <p>合計パンチ力: {totalPower.toFixed(2)}</p>
         </div>
     );
 }
 
 export default App;
+
+
 
 
 
