@@ -12,7 +12,7 @@ function App() {
         let maxPunchPower = 0;
         setIsMeasuring(prev => prev.map((item, idx) => idx === index ? true : item)); // 計測中フラグを立てる
         const interval = setInterval(() => {
-            const currentPower = Math.sqrt(motion.x ** 10 + motion.y ** 2 + motion.z ** 0);
+            const currentPower = Math.sqrt(motion.x ** 3 + motion.y ** 1 + motion.z ** 0);
             if (currentPower > maxPunchPower) {
                 maxPunchPower = currentPower;
             }
