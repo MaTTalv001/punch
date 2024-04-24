@@ -39,6 +39,9 @@ function App() {
                     <p>{`セット ${index + 1} の最大パンチ力: ${power.toFixed(2)}`}</p>
                 </div>
             ))}
+            <p>X軸の加速度: {motion.x?.toFixed(2) || 'Not available'}</p>
+            <p>Y軸の加速度: {motion.y?.toFixed(2) || 'Not available'}</p>
+            <p>Z軸の加速度: {motion.z?.toFixed(2) || 'Not available'}</p>
             <p>合計パンチ力: {totalPower.toFixed(2)}</p>
         </div>
     );
