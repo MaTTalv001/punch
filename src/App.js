@@ -15,7 +15,7 @@ function App() {
         setIsMeasuring(prev => prev.map((item, idx) => idx === index ? true : item));
 
         const interval = setInterval(() => {
-            const currentPower = Math.sqrt(motion.x ** 2 + motion.y ** 2 + motion.z ** 2);
+            const currentPower = Math.sqrt(motion.x ** 2 + motion.y ** 2);
             const currentTime = Date.now();
             const dt = (currentTime - velocities[index]) / 1000.0; // 前回からの時間差分
             velocity += currentPower * dt; // 速度は加速度に時間を掛けたものを積算
@@ -49,7 +49,7 @@ function App() {
             ))}
             <p>X軸の加速度: {motion.x?.toFixed(2) || 'Not available'}</p>
             <p>Y軸の加速度: {motion.y?.toFixed(2) || 'Not available'}</p>
-            <p>Z軸の加速度: {motion.z?.toFixed(2) || 'Not available'}</p>
+      
             <p>合計パンチ力: {totalPower.toFixed(2)}</p>
         </div>
     );
