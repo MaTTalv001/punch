@@ -7,9 +7,9 @@ function useDeviceMotion() {
     useEffect(() => {
         function handleMotionEvent(event) {
             setMotion({
-                x: event.accelerationIncludingGravity.x*10,
-                y: event.accelerationIncludingGravity.y*10,
-                z: event.accelerationIncludingGravity.z*10
+                x: event.accelerationIncludingGravity.x,
+                y: event.accelerationIncludingGravity.y,
+                z: event.accelerationIncludingGravity.z
             });
         }
 
