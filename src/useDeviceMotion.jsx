@@ -1,43 +1,46 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import useDeviceMotion from './useDeviceMotion';
 
-function useDeviceMotion() {
-    const [motion, setMotion] = useState({ x: 0, y: 0, z: 0 });
-    const [permissionGranted, setPermissionGranted] = useState(false);
+function App() {
+    const { motion, requestPermission } = useDeviceMotion();
+    const [velocity, setVelocity] = useState({ x: 0, y: 0, z: 0 });
+    const [isMeasuring, setIsMeasuring] = useState(false);
 
     useEffect(() => {
-        function handleMotionEvent(event) {
-            setMotion({
-                x: event.accelerationIncludingGravity.x,
-                y: event.accelerationIncludingGravity.y,
-                z: event.accelerationIncludingGravity.z
-            });
-        }
+        let lastTime = Date.now();
 
-        if (permissionGranted) {
-            window.addEventListener('devicemotion', handleMotionEvent);
-            return () => {
-                window.removeEventListener('devicemotion', handleMotionEvent);
-            };
-        }
-    }, [permissionGranted]);
+        if (isMeasuring) {
+            const interval = setInterval(() => {
+                const currentTime = Date.now();
+                const dt = (currentTime - lastTime) / 1000.0; // 秒単位で時間間隔を計算
+                lastTime = currentTime;
 
-    const requestPermission = () => {
-        if (typeof DeviceMotionEvent.requestPermission === 'function') {
-            DeviceMotionEvent.requestPermission()
-                .then(permissionState => {
-                    if (permissionState === 'granted') {
-                        setPermissionGranted(true);
-                    } else {
-                        alert('Permission not granted');
-                    }
-                })
-                .catch(console.error);
-        } else {
-            alert('DeviceMotionEvent.requestPermission is not supported on this device.');
+                setVelocity(vel => ({
+                    x: vel.x + motion.x * dt,
+                    y: vel.y + motion.y * dt,
+                    z: vel.z + motion.z * dt
+                }));
+            }, 100);
+
+            return () => clearInterval(interval);
         }
+    }, [isMeasuring, motion]);
+
+    const startMeasurement = () => {
+        setIsMeasuring(true);
+        setTimeout(() => setIsMeasuring(false), 10000); // 10秒後に計測を停止
     };
 
-    return { motion, requestPermission };
+    return (
+        <div>
+            <h1>パンチ速度測定</h1>
+            <button onClick={requestPermission}>Enable Device Motion</button>
+            <button onClick={startMeasurement} disabled={isMeasuring}>計測開始</button>
+            <p>X軸の速度: {velocity.x.toFixed(2)} m/s</p>
+            <p>Y軸の速度: {velocity.y.toFixed(2)} m/s</p>
+            <p>Z軸の速度: {velocity.z.toFixed(2)} m/s</p>
+        </div>
+    );
 }
 
-export default useDeviceMotion;
+export default App;
