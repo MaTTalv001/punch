@@ -7,30 +7,24 @@ function App() {
     const [isMeasuring, setIsMeasuring] = useState(false);
 
     useEffect(() => {
-    let lastTime = Date.now();
-    let currentInterval = null;
+        let lastTime = Date.now();
 
-    if (isMeasuring) {
-        currentInterval = setInterval(() => {
-            const currentTime = Date.now();
-            const dt = (currentTime - lastTime) / 1000.0; // 秒単位で時間間隔を計算
-            lastTime = currentTime;
+        if (isMeasuring) {
+            const interval = setInterval(() => {
+                const currentTime = Date.now();
+                const dt = (currentTime - lastTime) / 1000.0; // 秒単位で時間間隔を計算
+                lastTime = currentTime;
 
-            setVelocity(vel => ({
-                x: vel.x + motion.x * dt,
-                y: vel.y + motion.y * dt,
-                z: vel.z + motion.z * dt
-            }));
-        }, 100);
-    }
+                setVelocity(vel => ({
+                    x: vel.x + motion.x * dt,
+                    y: vel.y + motion.y * dt,
+                    z: vel.z + motion.z * dt
+                }));
+            }, 100);
 
-    return () => {
-        if (currentInterval) {
-            clearInterval(currentInterval);
+            return () => clearInterval(interval);
         }
-    };
-}, [isMeasuring, motion]); // motion.x, motion.y, motion.z をここに含める必要がありますか？それとも motion のみで十分ですか？
-
+    }, [isMeasuring, motion]);
 
     const startMeasurement = () => {
         setIsMeasuring(true);
@@ -50,4 +44,5 @@ function App() {
 }
 
 export default App;
+
 
