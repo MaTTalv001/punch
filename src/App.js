@@ -30,7 +30,7 @@ function App() {
                 y: motion.y - gravity.y,
                 z: motion.z - gravity.z
             };
-            const currentPower = Math.sqrt(correctedAcceleration.x ** 2 + correctedAcceleration.y ** 2 + correctedAcceleration.z ** 2);
+            const currentPower = 80 * Math.sqrt(correctedAcceleration.x ** 2 + correctedAcceleration.y ** 2 + correctedAcceleration.z ** 2);
             
             if (currentPower > maxPunchPower) {
                 maxPunchPower = currentPower;
