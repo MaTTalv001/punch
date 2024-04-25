@@ -1,59 +1,31 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import useDeviceMotion from './useDeviceMotion';
 
 function App() {
     const { motion, requestPermission } = useDeviceMotion();
     const [maxPowers, setMaxPowers] = useState([0, 0, 0]);
     const [isMeasuring, setIsMeasuring] = useState([false, false, false]);
-    const [gravity, setGravity] = useState({ x: 0, y: 0, z: 0 });
-
-    // 重力成分の更新
-    useEffect(() => {
-        const alpha = 0.8;
-        if (isMeasuring.some(Boolean)) {  // 測定中のみ重力を更新
-            setGravity(g => ({
-                x: alpha * g.x + (1 - alpha) * motion.x,
-                y: alpha * g.y + (1 - alpha) * motion.y,
-                z: alpha * g.z + (1 - alpha) * motion.z
-            }));
-        }
-    }, [motion, isMeasuring]);
-
-    // パンチ力の計算
-    useEffect(() => {
-        if (!isMeasuring.every(Boolean)) return;  // 誰も計測中でなければ何もしない
-
-        const intervals = isMeasuring.map((measuring, index) => {
-            if (!measuring) return null;
-
-            return setInterval(() => {
-                const correctedAcceleration = {
-                    x: motion.x - gravity.x,
-                    y: motion.y - gravity.y,
-                    z: motion.z - gravity.z
-                };
-                const currentPower = Math.sqrt(correctedAcceleration.x ** 2 + correctedAcceleration.y ** 2 + correctedAcceleration.z ** 2);
-                if (currentPower > maxPowers[index]) {
-                    setMaxPowers(powers => powers.map((power, idx) => idx === index ? currentPower : power));
-                }
-            }, 100);
-        });
-
-        return () => {
-            intervals.forEach(interval => {
-                if (interval !== null) clearInterval(interval);
-            });
-        };
-    }, [isMeasuring, motion, gravity]);
 
     const startMeasurement = (index) => {
-        setIsMeasuring(isMeasuring.map((item, idx) => idx === index ? true : item));
+        if (isMeasuring[index]) return; // すでに計測中の場合は何もしない
+
+        let maxPunchPower = 0;
+        setIsMeasuring(prev => prev.map((item, idx) => idx === index ? true : item)); // 計測中フラグを立てる
+        const interval = setInterval(() => {
+            const currentPower = Math.sqrt(motion.x ** 2 + motion.y ** 2 + motion.z ** 2);
+            if (currentPower > maxPunchPower) {
+                maxPunchPower = currentPower;
+            }
+        }, 100);
+
         setTimeout(() => {
-            setIsMeasuring(isMeasuring.map((item, idx) => idx === index ? false : item));
-        }, 10000);
+            clearInterval(interval);
+            setIsMeasuring(prev => prev.map((item, idx) => idx === index ? false : item)); // 計測中フラグを下げる
+            setMaxPowers(prev => prev.map((item, idx) => idx === index ? maxPunchPower : item)); // 最大値を更新
+        }, 10000); // 10秒後に測定を停止
     };
 
-    const totalPower = maxPowers.reduce((acc, val) => acc + val, 0);
+    const totalPower = maxPowers.reduce((acc, val) => acc + val, 0); // 合計パンチ力を計算
 
     return (
         <div>
