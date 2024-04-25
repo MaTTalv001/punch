@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import useDeviceMotion from './useDeviceMotion';
 
 function App() {
@@ -6,6 +6,17 @@ function App() {
     const [maxPowers, setMaxPowers] = useState([0, 0, 0]);
     const [isMeasuring, setIsMeasuring] = useState([false, false, false]);
     const [velocities, setVelocities] = useState([0, 0, 0]); // 各セットの速度を保持するステート
+    const [gravity, setGravity] = useState({ x: 0, y: 0, z: 0 });
+
+    const alpha = 0.8; // 重力データの平滑化に使用する係数
+
+    useEffect(() => {
+        setGravity({
+            x: alpha * gravity.x + (1 - alpha) * motion.x,
+            y: alpha * gravity.y + (1 - alpha) * motion.y,
+            z: alpha * gravity.z + (1 - alpha) * motion.z
+        });
+    }, [motion]);
 
     const startMeasurement = (index) => {
         if (isMeasuring[index]) return;
@@ -15,7 +26,11 @@ function App() {
         setIsMeasuring(prev => prev.map((item, idx) => idx === index ? true : item));
 
         const interval = setInterval(() => {
-            const currentPower = Math.sqrt(motion.x ** 2 + motion.y ** 2 + motion.y ** 2);
+            const currentPower = Math.sqrt(
+                Math.pow(motion.x - gravity.x, 2) +
+                Math.pow(motion.y - gravity.y, 2) +
+                Math.pow(motion.z - gravity.z, 2)
+            );
             const currentTime = Date.now();
             const dt = (currentTime - velocities[index]) / 1000.0; // 前回からの時間差分
             velocity += currentPower * dt; // 速度は加速度に時間を掛けたものを積算
@@ -56,6 +71,7 @@ function App() {
 }
 
 export default App;
+
 
 
 
