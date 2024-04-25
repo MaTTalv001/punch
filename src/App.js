@@ -6,42 +6,54 @@ function App() {
     const [maxPowers, setMaxPowers] = useState([0, 0, 0]);
     const [isMeasuring, setIsMeasuring] = useState([false, false, false]);
     const [gravity, setGravity] = useState({ x: 0, y: 0, z: 0 });
-    const alpha = 0.8;  // 重力データの平滑化に使用する係数
 
+    // 重力成分の更新
     useEffect(() => {
-        setGravity({
-            x: alpha * gravity.x + (1 - alpha) * motion.x,
-            y: alpha * gravity.y + (1 - alpha) * motion.y,
-            z: alpha * gravity.z + (1 - alpha) * motion.z
+        const alpha = 0.8;
+        if (isMeasuring.some(Boolean)) {  // 測定中のみ重力を更新
+            setGravity(g => ({
+                x: alpha * g.x + (1 - alpha) * motion.x,
+                y: alpha * g.y + (1 - alpha) * motion.y,
+                z: alpha * g.z + (1 - alpha) * motion.z
+            }));
+        }
+    }, [motion, isMeasuring]);
+
+    // パンチ力の計算
+    useEffect(() => {
+        if (!isMeasuring.every(Boolean)) return;  // 誰も計測中でなければ何もしない
+
+        const intervals = isMeasuring.map((measuring, index) => {
+            if (!measuring) return null;
+
+            return setInterval(() => {
+                const correctedAcceleration = {
+                    x: motion.x - gravity.x,
+                    y: motion.y - gravity.y,
+                    z: motion.z - gravity.z
+                };
+                const currentPower = Math.sqrt(correctedAcceleration.x ** 2 + correctedAcceleration.y ** 2 + correctedAcceleration.z ** 2);
+                if (currentPower > maxPowers[index]) {
+                    setMaxPowers(powers => powers.map((power, idx) => idx === index ? currentPower : power));
+                }
+            }, 100);
         });
-    }, [motion, gravity]);
+
+        return () => {
+            intervals.forEach(interval => {
+                if (interval !== null) clearInterval(interval);
+            });
+        };
+    }, [isMeasuring, motion, gravity]);
 
     const startMeasurement = (index) => {
-        if (isMeasuring[index]) return; // すでに計測中の場合は何もしない
-
-        let maxPunchPower = 0;
-        setIsMeasuring(prev => prev.map((item, idx) => idx === index ? true : item));
-
-        const interval = setInterval(() => {
-            const correctedAcceleration = {
-                x: motion.x - gravity.x,
-                y: motion.y - gravity.y,
-                z: motion.z - gravity.z
-            };
-            const currentPower = Math.sqrt(correctedAcceleration.x ** 2 + correctedAcceleration.y ** 2 + correctedAcceleration.z ** 2);
-            if (currentPower > maxPunchPower) {
-                maxPunchPower = currentPower;
-            }
-        }, 100);
-
+        setIsMeasuring(isMeasuring.map((item, idx) => idx === index ? true : item));
         setTimeout(() => {
-            clearInterval(interval);
-            setIsMeasuring(prev => prev.map((item, idx) => idx === index ? false : item));
-            setMaxPowers(prev => prev.map((item, idx) => idx === index ? maxPunchPower : item));
-        }, 10000); // 10秒後に測定を停止
+            setIsMeasuring(isMeasuring.map((item, idx) => idx === index ? false : item));
+        }, 10000);
     };
 
-    const totalPower = maxPowers.reduce((acc, val) => acc + val, 0); // 合計パンチ力を計算
+    const totalPower = maxPowers.reduce((acc, val) => acc + val, 0);
 
     return (
         <div>
@@ -64,6 +76,7 @@ function App() {
 }
 
 export default App;
+
 
 
 
