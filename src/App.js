@@ -5,10 +5,8 @@ function App() {
     const { motion, requestPermission } = useDeviceMotion();
     const [maxPowers, setMaxPowers] = useState([0, 0, 0]);
     const [isMeasuring, setIsMeasuring] = useState([false, false, false]);
-    const [velocities, setVelocities] = useState([0, 0, 0]); // 各セットの速度を保持するステート
     const [gravity, setGravity] = useState({ x: 0, y: 0, z: 0 });
-
-    const alpha = 0.8; // 重力データの平滑化に使用する係数
+    const alpha = 0.8;  // 重力データの平滑化に使用する係数
 
     useEffect(() => {
         setGravity({
@@ -16,28 +14,23 @@ function App() {
             y: alpha * gravity.y + (1 - alpha) * motion.y,
             z: alpha * gravity.z + (1 - alpha) * motion.z
         });
-    }, [motion]);
+    }, [motion, gravity]);
 
     const startMeasurement = (index) => {
-        if (isMeasuring[index]) return;
+        if (isMeasuring[index]) return; // すでに計測中の場合は何もしない
 
         let maxPunchPower = 0;
-        let velocity = 0; // 速度の初期値
         setIsMeasuring(prev => prev.map((item, idx) => idx === index ? true : item));
 
         const interval = setInterval(() => {
-            const currentPower = Math.sqrt(
-                Math.pow(motion.x - gravity.x, 2) +
-                Math.pow(motion.y - gravity.y, 2) +
-                Math.pow(motion.z - gravity.z, 2)
-            );
-            const currentTime = Date.now();
-            const dt = (currentTime - velocities[index]) / 1000.0; // 前回からの時間差分
-            velocity += currentPower * dt; // 速度は加速度に時間を掛けたものを積算
-            setVelocities(prev => prev.map((item, idx) => idx === index ? currentTime : item));
-
-            if (velocity > maxPunchPower) {
-                maxPunchPower = velocity;
+            const correctedAcceleration = {
+                x: motion.x - gravity.x,
+                y: motion.y - gravity.y,
+                z: motion.z - gravity.z
+            };
+            const currentPower = Math.sqrt(correctedAcceleration.x ** 2 + correctedAcceleration.y ** 2 + correctedAcceleration.z ** 2);
+            if (currentPower > maxPunchPower) {
+                maxPunchPower = currentPower;
             }
         }, 100);
 
@@ -45,10 +38,10 @@ function App() {
             clearInterval(interval);
             setIsMeasuring(prev => prev.map((item, idx) => idx === index ? false : item));
             setMaxPowers(prev => prev.map((item, idx) => idx === index ? maxPunchPower : item));
-        }, 10000);
+        }, 10000); // 10秒後に測定を停止
     };
 
-    const totalPower = maxPowers.reduce((acc, val) => acc + val, 0);
+    const totalPower = maxPowers.reduce((acc, val) => acc + val, 0); // 合計パンチ力を計算
 
     return (
         <div>
