@@ -1,5 +1,5 @@
 import React from 'react';
-import GameApp from './GameApp'; // GameApp コンポーネントをインポート
+import ShakeCounterApp from "./ShakeCounterApp";
 
 function App() {
     return (
@@ -7,7 +7,8 @@ function App() {
             <header className="App-header">
                 <h1>Welcome to Monster Battle Game!</h1>
             </header>
-            <GameApp />  
+        
+             <ShakeCounterApp /> 
         </div>
     );
 }
