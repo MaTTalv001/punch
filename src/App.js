@@ -5,33 +5,38 @@ function App() {
     const { motion, requestPermission } = useDeviceMotion();
     const [maxPowers, setMaxPowers] = useState([0, 0, 0]);
     const [isMeasuring, setIsMeasuring] = useState([false, false, false]);
-    const [gravity, setGravity] = useState({ x: 0, y: 0, z: 0 });
-    const alpha = 0.8; // 重力データの平滑化に使用する係数
+    const [gravity, setGravity] = useState({ x: 0, y: 0, z: 0 }); // 重力データを格納する状態
+    const [filteredAcceleration, setFilteredAcceleration] = useState({ x: 0, y: 0, z: 0 }); // フィルタされた加速度データ
+    const alpha = 0.1; // ローパスフィルタの平滑化係数
 
+    // 加速度データ更新時にフィルタリングを実行
     useEffect(() => {
-        // 重力データの平滑化を行う（低パスフィルタ）
-        setGravity(g => ({
-            x: alpha * g.x + (1 - alpha) * motion.x,
-            y: alpha * g.y + (1 - alpha) * motion.y,
-            z: alpha * g.z + (1 - alpha) * motion.z
-        }));
+        // ローパスフィルタで重力を抽出
+        const newGravity = {
+            x: alpha * motion.x + (1 - alpha) * gravity.x,
+            y: alpha * motion.y + (1 - alpha) * gravity.y,
+            z: alpha * motion.z + (1 - alpha) * gravity.z
+        };
+        setGravity(newGravity);
+
+        // ハイパスフィルタで重力成分を除去
+        const newFilteredAcceleration = {
+            x: motion.x - newGravity.x,
+            y: motion.y - newGravity.y,
+            z: motion.z - newGravity.z
+        };
+        setFilteredAcceleration(newFilteredAcceleration);
+
     }, [motion]);
 
+    // 測定開始
     const startMeasurement = (index) => {
         if (isMeasuring[index]) return;
-
-        let maxPunchPower = 0;
         setIsMeasuring(prev => prev.map((item, idx) => idx === index ? true : item));
 
+        let maxPunchPower = 0;
         const interval = setInterval(() => {
-            // 重力成分を除去した加速度を計算（ハイパスフィルタ）
-            const correctedAcceleration = {
-                x: motion.x - gravity.x,
-                y: motion.y - gravity.y,
-                z: motion.z - gravity.z
-            };
-            const currentPower =70 * Math.sqrt(correctedAcceleration.x ** 2 + correctedAcceleration.y ** 2 + correctedAcceleration.z ** 2);
-            
+            const currentPower = Math.sqrt(filteredAcceleration.x ** 2 + filteredAcceleration.y ** 2 + filteredAcceleration.z ** 2);
             if (currentPower > maxPunchPower) {
                 maxPunchPower = currentPower;
             }
@@ -44,7 +49,7 @@ function App() {
         }, 10000); // 10秒後に測定を停止
     };
 
-    const totalPower = maxPowers.reduce((acc, val) => acc + val, 0);
+    const totalPower = maxPowers.reduce((acc, val) => acc + val, 0); // 合計パンチ力を計算
 
     return (
         <div>
@@ -58,9 +63,9 @@ function App() {
                     <p>{`セット ${index + 1} の最大パンチ力: ${power.toFixed(2)}`}</p>
                 </div>
             ))}
-            <p>X軸の加速度: {motion.x?.toFixed(2) || 'Not available'}</p>
-            <p>Y軸の加速度: {motion.y?.toFixed(2) || 'Not available'}</p>
-            <p>Z軸の加速度: {motion.z?.toFixed(2) || 'Not available'}</p>
+            <p>X軸の加速度: {motion.x.toFixed(2) || 'Not available'}</p>
+            <p>Y軸の加速度: {motion.y.toFixed(2) || 'Not available'}</p>
+            <p>Z軸の加速度: {motion.z.toFixed(2) || 'Not available'}</p>
             <p>合計パンチ力: {totalPower.toFixed(2)}</p>
         </div>
     );
