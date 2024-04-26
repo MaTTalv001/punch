@@ -29,7 +29,7 @@ function GameApp() {
             clearInterval(interval);
             console.log("Cleanup done.");
         };
-    }, [isShaking]);  // Remove 'motion' from dependency array to prevent frequent re-execution
+    }, [isShaking,motion]);  // Remove 'motion' from dependency array to prevent frequent re-execution
 
     const startShaking = () => {
         requestPermission()
