@@ -7,17 +7,19 @@ function ShakeCounterApp() {
   const [timeLeft, setTimeLeft] = useState(10);
   const [isCountingShakes, setIsCountingShakes] = useState(false);
   const [lastShakeTime, setLastShakeTime] = useState(0);
+  const [finalScore, setFinalScore] = useState(null);
 
   useEffect(() => {
     if (isCountingShakes && timeLeft > 0) {
       const timer = setTimeout(() => {
         setTimeLeft(timeLeft - 1);
-      }, 2000);
+      }, 1000);
       return () => clearTimeout(timer);
     } else if (timeLeft === 0) {
       setIsCountingShakes(false);
+      setFinalScore(shakeCount);
     }
-  }, [isCountingShakes, timeLeft]);
+  }, [isCountingShakes, timeLeft, shakeCount]);
 
   useEffect(() => {
     if (isCountingShakes) {
@@ -25,7 +27,7 @@ function ShakeCounterApp() {
       const acceleration = Math.sqrt(x * x + y * y + z * z);
       const currentTime = new Date().getTime();
 
-      if (acceleration > 10 && currentTime - lastShakeTime > 200) {
+      if (acceleration > 20 && currentTime - lastShakeTime > 500) {
         setShakeCount(shakeCount + 1);
         setLastShakeTime(currentTime);
       }
@@ -33,6 +35,7 @@ function ShakeCounterApp() {
   }, [motion, isCountingShakes, shakeCount, lastShakeTime]);
 
   const startCounting = () => {
+    setFinalScore(null);
     setShakeCount(0);
     setTimeLeft(10);
     setIsCountingShakes(true);
@@ -53,8 +56,17 @@ function ShakeCounterApp() {
         </>
       ) : (
         <>
-          <p>10秒間でできるだけ多くシェイクしてください！</p>
-          <button onClick={startCounting}>スタート</button>
+          {finalScore !== null ? (
+            <>
+              <p>あなたのスコア: {finalScore}</p>
+              <button onClick={startCounting}>もう一度プレイ</button>
+            </>
+          ) : (
+            <>
+              <p>10秒間でできるだけ多くシェイクしてください！</p>
+              <button onClick={startCounting}>スタート</button>
+            </>
+          )}
         </>
       )}
     </div>
