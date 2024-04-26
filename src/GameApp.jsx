@@ -7,15 +7,12 @@ function GameApp() {
     const [isShaking, setIsShaking] = useState(false);
 
     useEffect(() => {
-        let interval;
-
         if (isShaking) {
-            interval = setInterval(() => {
-                const shakePower = 100 * Math.sqrt(motion.x ** 2 + motion.y ** 2 + motion.z ** 2);
-              console.log(`Shake Power: ${shakePower}`);
-              if (shakePower > 80) {
+            console.log("Shaking started.");
+            const interval = setInterval(() => {
+                const shakePower = 50 * Math.sqrt(motion.x ** 2 + motion.y ** 2 + motion.z ** 2);
+                console.log(`Shake Power: ${shakePower} at x: ${motion.x}, y: ${motion.y}, z: ${motion.z}`);
                 setEnergy(prevEnergy => prevEnergy + shakePower);
-              }
             }, 100);
 
             setTimeout(() => {
@@ -24,22 +21,23 @@ function GameApp() {
                 clearInterval(interval);
             }, 10000);
         }
+    }, [isShaking]); // motionを依存配列から外す
 
-        return () => {
-            clearInterval(interval);
-            console.log("Cleanup done.");
+    useEffect(() => {
+        const handleMotionUpdate = () => {
+            console.log(`Motion updated: x=${motion.x}, y=${motion.y}, z=${motion.z}`);
         };
-    }, [isShaking,motion]);  // Remove 'motion' from dependency array to prevent frequent re-execution
+        handleMotionUpdate();
+    }, [motion]); // motionの更新を追跡
 
-    const startShaking = () => {
-        requestPermission()
-            .then(() => {
-                console.log("Permission granted and shaking is set to true.");
-                setIsShaking(true);
-            })
-            .catch(err => {
-                console.error("Permission request failed", err);
-            });
+    const startShaking = async () => {
+        try {
+            await requestPermission();
+            console.log("Permission granted and shaking is set to true.");
+            setIsShaking(true);
+        } catch (error) {
+            console.error("Permission request failed", error);
+        }
     };
 
     const stopShaking = () => {
