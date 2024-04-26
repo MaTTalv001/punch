@@ -47,6 +47,7 @@ function ShakeCounterApp() {
             clearInterval(countdownRef.current);
             setCountdownStarted(false);
             setIsCountingShakes(true);
+            setGameState('shake');
             setLastShakeTime(0);
             return 0;
           }
@@ -111,7 +112,7 @@ function ShakeCounterApp() {
       )}
       {gameState === 'result' && (
         <div className="message-box">
-          <p>{finalScore}のダメージを与えた！！</p>
+          <p>シェイク回数: {finalScore}</p>
           <button onClick={punchMonster}>パンチ</button>
         </div>
       )}
