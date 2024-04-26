@@ -12,7 +12,7 @@ function ShakeCounterApp() {
     if (isCountingShakes && timeLeft > 0) {
       const timer = setTimeout(() => {
         setTimeLeft(timeLeft - 1);
-      }, 1000);
+      }, 2000);
       return () => clearTimeout(timer);
     } else if (timeLeft === 0) {
       setIsCountingShakes(false);
@@ -25,7 +25,7 @@ function ShakeCounterApp() {
       const acceleration = Math.sqrt(x * x + y * y + z * z);
       const currentTime = new Date().getTime();
 
-      if (acceleration > 20 && currentTime - lastShakeTime > 500) {
+      if (acceleration > 10 && currentTime - lastShakeTime > 200) {
         setShakeCount(shakeCount + 1);
         setLastShakeTime(currentTime);
       }
