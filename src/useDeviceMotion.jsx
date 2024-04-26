@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function useDeviceMotion() {
     const [motion, setMotion] = useState({ x: 0, y: 0, z: 0 });
@@ -7,15 +7,20 @@ function useDeviceMotion() {
     useEffect(() => {
         const handleMotionEvent = event => {
             setMotion({
-                x: event.accelerationIncludingGravity.x,
-                y: event.accelerationIncludingGravity.y,
-                z: event.accelerationIncludingGravity.z
+                x: event.acceleration.x,
+                y: event.acceleration.y,
+                z: event.acceleration.z
             });
         };
 
         if (permissionGranted) {
-            window.addEventListener('devicemotion', handleMotionEvent);
-            return () => window.removeEventListener('devicemotion', handleMotionEvent);
+            setTimeout(() => { // 少し遅延を入れてからイベントリスナーを設定
+                window.addEventListener('devicemotion', handleMotionEvent);
+            }, 500);
+
+            return () => {
+                window.removeEventListener('devicemotion', handleMotionEvent);
+            };
         }
     }, [permissionGranted]);
 
