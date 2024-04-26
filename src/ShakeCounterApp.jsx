@@ -52,7 +52,7 @@ function ShakeCounterApp() {
             return 0;
           }
         });
-      }, 1000);
+      }, 500);
     }
 
     return () => {
@@ -66,7 +66,7 @@ function ShakeCounterApp() {
       const acceleration = Math.sqrt(x * x + y * y + z * z);
       const currentTime = new Date().getTime();
 
-      if (acceleration > 20 && currentTime - lastShakeTime > 200) {
+      if (acceleration > 30 && currentTime - lastShakeTime > 200) {
         setShakeCount((prevCount) => prevCount + 1);
         setLastShakeTime(currentTime);
       }
@@ -76,7 +76,7 @@ function ShakeCounterApp() {
   const startCounting = () => {
     setFinalScore(null);
     setShakeCount(0);
-    setTimeLeft(5);
+    setTimeLeft(3);
     setCountdownTime(5);
     setCountdownStarted(true);
     setGameState('countdown');
@@ -101,19 +101,21 @@ function ShakeCounterApp() {
       )}
       {gameState === 'countdown' && (
         <div className="message-box">
-          <p>力をためています: {countdownTime}秒</p>
+          <p>スマートフォンを激しくシェイクして力をためます</p>
+          <p>周囲の安全を確かめてください: {countdownTime}秒</p>
         </div>
       )}
       {gameState === 'shake' && (
         <div className="message-box">
           <p>残り時間: {timeLeft}秒</p>
-          <p>シェイク回数: {shakeCount}</p>
+          <p>残り時間はシェイクしている限り減らない！！</p>
+          <p>限界を超えろっっっ！！！</p>
         </div>
       )}
       {gameState === 'result' && (
         <div className="message-box">
-          <p>シェイク回数: {finalScore}</p>
-          <button onClick={punchMonster}>パンチ</button>
+          <p>力がみなぎった！！</p>
+          <button onClick={punchMonster}>無限宇宙メテオストライクパンチ！！</button>
         </div>
       )}
       {gameState === 'punched' && (
