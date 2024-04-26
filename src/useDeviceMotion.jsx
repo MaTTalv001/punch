@@ -5,22 +5,17 @@ function useDeviceMotion() {
     const [permissionGranted, setPermissionGranted] = useState(false);
 
     useEffect(() => {
-        const handleMotionEvent = event => {
+        function handleMotionEvent(event) {
             setMotion({
-                x: event.acceleration.x,
-                y: event.acceleration.y,
-                z: event.acceleration.z
+                x: event.accelerationIncludingGravity.x,
+                y: event.accelerationIncludingGravity.y,
+                z: event.accelerationIncludingGravity.z
             });
-        };
+        }
 
         if (permissionGranted) {
-            setTimeout(() => { // 少し遅延を入れてからイベントリスナーを設定
-                window.addEventListener('devicemotion', handleMotionEvent);
-            }, 10);
-
-            return () => {
-                window.removeEventListener('devicemotion', handleMotionEvent);
-            };
+            window.addEventListener('devicemotion', handleMotionEvent);
+            return () => window.removeEventListener('devicemotion', handleMotionEvent);
         }
     }, [permissionGranted]);
 
@@ -28,14 +23,9 @@ function useDeviceMotion() {
         if (typeof DeviceMotionEvent.requestPermission === 'function') {
             try {
                 const permissionState = await DeviceMotionEvent.requestPermission();
-                if (permissionState === 'granted') {
-                    setPermissionGranted(true);
-                } else {
-                    alert('Permission not granted');
-                }
+                setPermissionGranted(permissionState === 'granted');
             } catch (error) {
                 console.error('Permission request failed', error);
-                alert('Error requesting permission.');
             }
         } else {
             alert('DeviceMotionEvent.requestPermission is not supported on this device.');
@@ -44,5 +34,3 @@ function useDeviceMotion() {
 
     return { motion, requestPermission };
 }
-
-export default useDeviceMotion;
