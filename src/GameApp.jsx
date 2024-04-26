@@ -12,10 +12,9 @@ function GameApp() {
             console.log("Shaking started.");
             const interval = setInterval(() => {
                 const shakePower = 50 * Math.sqrt(motion.x ** 2 + motion.y ** 2 + motion.z ** 2);
-                console.log(`Shake Power: ${shakePower}`);  // ログで振動の強さを出力
-                if (shakePower > 0.1) {
-                    setEnergy(prevEnergy => prevEnergy + shakePower);
-                }
+              console.log(`Shake Power: ${shakePower}`);  // ログで振動の強さを出力
+              setEnergy(prevEnergy => prevEnergy + shakePower);
+                
             }, 100);
 
             const timeout = setTimeout(() => {
@@ -50,7 +49,8 @@ function GameApp() {
 
     return (
         <div>
-            <h1>モンスターバトル</h1>
+        <h1>モンスターバトル</h1>
+        { energy}
             <button onClick={startShaking} disabled={isShaking}>スマホを振る！</button>
             <button onClick={stopShaking} disabled={!isShaking}>停止</button>
             <button onClick={useEnergy} disabled={energy <= 0}>必殺技発動！</button>
