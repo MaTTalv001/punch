@@ -29,8 +29,7 @@ function GameApp() {
                 console.log("Cleanup done.");
             };
         }
-    }, []);  // motionを依存配列から除外
-
+    }, []);  
     const startShaking = () => {
         requestPermission().then(() => {
             setIsShaking(true);
