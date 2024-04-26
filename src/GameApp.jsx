@@ -6,32 +6,44 @@ function GameApp() {
     const [energy, setEnergy] = useState(0);
     const [monsterHealth, setMonsterHealth] = useState(100);
     const [isShaking, setIsShaking] = useState(false);
+    const [startTime, setStartTime] = useState(null);
 
     useEffect(() => {
-        if (isShaking) {
-            console.log("Shaking started.");
-            const interval = setInterval(() => {
-                const shakePower = 50 * Math.sqrt(motion.x ** 2 + motion.y ** 2 + motion.z ** 2);
-              console.log(`Shake Power: ${shakePower}`);  // ログで振動の強さを出力
-              setEnergy(shakePower);
-                
-            }, 100);
-
-            const timeout = setTimeout(() => {
+        let animationFrameId;
+        
+        const updateEnergy = () => {
+            if (Date.now() - startTime >= 10000) {  // 10秒経過チェック
                 console.log("Shaking auto-stopped after 10 seconds.");
-                setIsShaking(false);  // setTimeout内で状態を更新
-            }, 10000);
+                setIsShaking(false);
+                cancelAnimationFrame(animationFrameId);
+                return;
+            }
 
-            return () => {
-                clearInterval(interval);
-                clearTimeout(timeout);
-                console.log("Cleanup done.");
-            };
+            const shakePower = 50 * Math.sqrt(motion.x ** 2 + motion.y ** 2 + motion.z ** 2);
+            if (shakePower > 0.1) {
+                setEnergy(prevEnergy => prevEnergy + shakePower);
+            }
+            animationFrameId = requestAnimationFrame(updateEnergy);
+        };
+
+        if (isShaking) {
+            setStartTime(Date.now());
+            animationFrameId = requestAnimationFrame(updateEnergy);
         }
-    }, [isShaking, motion]);  
+
+        return () => {
+            cancelAnimationFrame(animationFrameId);
+            console.log("Cleanup done.");
+        };
+    }, [isShaking, motion]);
+
     const startShaking = () => {
-      requestPermission();
-      setIsShaking(true);
+        requestPermission().then(() => {
+            console.log("Permission granted and shaking is set to true.");
+            setIsShaking(true);
+        }).catch(err => {
+            console.error("Permission request failed", err);
+        });
     };
 
     const stopShaking = () => {
@@ -49,8 +61,7 @@ function GameApp() {
 
     return (
         <div>
-        <h1>モンスターバトル</h1>
-        { energy}
+            <h1>モンスターバトル</h1>
             <button onClick={startShaking} disabled={isShaking}>スマホを振る！</button>
             <button onClick={stopShaking} disabled={!isShaking}>停止</button>
             <button onClick={useEnergy} disabled={energy <= 0}>必殺技発動！</button>
@@ -64,6 +75,7 @@ function GameApp() {
 }
 
 export default GameApp;
+
 
 
 
