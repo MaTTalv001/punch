@@ -57,7 +57,7 @@ function GameApp() {
         <div>
             <h1>モンスターバトル</h1>
             <button onClick={startShaking} disabled={isShaking}>スマホを振る！</button>
-            <button onClick={stopShaking} disabled={!isShaking}>停止</button>
+            <button onClick={stopShaking} >停止</button>
             <button onClick={useEnergy} disabled={energy <= 0}>必殺技発動！</button>
             <div>モンスターの体力: {monsterHealth}</div>
             <div>蓄積エネルギー: {energy.toFixed(2)}</div>
