@@ -5,39 +5,30 @@ function GameApp() {
     const { motion, requestPermission } = useDeviceMotion();
     const [energy, setEnergy] = useState(0);
     const [isShaking, setIsShaking] = useState(false);
-    const [latestMotion, setLatestMotion] = useState({ x: 0, y: 0, z: 0 });
-
-    // 加速度データが更新されるたびに最新のmotionを状態に保存
-    useEffect(() => {
-        setLatestMotion(motion);
-    }, [motion]);
 
     useEffect(() => {
         let interval;
         
         if (isShaking) {
             interval = setInterval(() => {
-                const { x, y, z } = latestMotion;
-                const shakePower = 50 * Math.sqrt(x ** 2 + y ** 2 + z ** 2);
-                console.log(`Shake Power: ${shakePower} at x: ${x}, y: ${y}, z: ${z}`);
+                // 直接 motion を参照して shakePower を計算
+                const shakePower = 50 * Math.sqrt(motion.x ** 2 + motion.y ** 2 + motion.z ** 2);
+                console.log(`Shake Power: ${shakePower} at x: ${motion.x}, y: ${motion.y}, z: ${motion.z}`);
                 setEnergy(prevEnergy => prevEnergy + shakePower);
             }, 100);
-        }
 
-        const timeout = setTimeout(() => {
-            if (isShaking) {
+            const timeout = setTimeout(() => {
                 console.log("Shaking auto-stopped after 10 seconds.");
                 setIsShaking(false);
                 clearInterval(interval);
-            }
-        }, 10000);
+            }, 10000);
+        }
 
         return () => {
             clearInterval(interval);
-            clearTimeout(timeout);
             console.log("Cleanup done.");
         };
-    }, [isShaking, latestMotion]); // 依存配列にlatestMotionを使用
+    }, [isShaking]); // ここに motion を含めない
 
     const startShaking = async () => {
         try {
