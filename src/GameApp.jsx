@@ -12,17 +12,26 @@ function GameApp() {
         let timeout;
 
         if (isShaking) {
-            console.log("Shaking started.");
+            console.log("Shaking started, monitoring motion...");
             interval = setInterval(() => {
                 const shakePower = 50 * Math.sqrt(motion.x ** 2 + motion.y ** 2 + motion.z ** 2);
-                console.log(`Shake Power: ${shakePower}`);  // ログで振動の強さを出力
-                setEnergy(prevEnergy => prevEnergy + shakePower);
+                console.log(`Current motion values: x=${motion.x}, y=${motion.y}, z=${motion.z}`);
+                console.log(`Shake Power: ${shakePower}`);
+                if (shakePower > 0.1) {
+                    setEnergy(prevEnergy => {
+                        console.log(`Updating energy from ${prevEnergy} to ${prevEnergy + shakePower}`);
+                        return prevEnergy + shakePower;
+                    });
+                }
             }, 100);
 
             timeout = setTimeout(() => {
                 console.log("Shaking auto-stopped after 10 seconds.");
                 setIsShaking(false);
                 clearInterval(interval);
+                console.log(`Energy before reset: ${energy}`);
+                setEnergy(0);
+                console.log("Energy has been reset.");
             }, 10000);
         }
 
@@ -31,7 +40,7 @@ function GameApp() {
             clearTimeout(timeout);
             console.log("Cleanup done.");
         };
-    }, [isShaking, motion]);  
+    }, [isShaking, motion]);
 
     const startShaking = () => {
         requestPermission().then(() => {
@@ -71,6 +80,7 @@ function GameApp() {
 }
 
 export default GameApp;
+
 
 
 
