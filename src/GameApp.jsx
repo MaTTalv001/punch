@@ -29,14 +29,11 @@ function GameApp() {
                 console.log("Cleanup done.");
             };
         }
-    }, []);  
+    }, [isShaking, motion]);  
     const startShaking = () => {
-        requestPermission().then(() => {
+        
             setIsShaking(true);
-            console.log("Permission granted and shaking is set to true.");
-        }).catch(err => {
-            console.error("Permission request failed", err);
-        });
+            
     };
 
     const stopShaking = () => {
