@@ -31,9 +31,12 @@ function GameApp() {
         }
     }, [isShaking, motion]);  
     const startShaking = () => {
-        
-            setIsShaking(true);
-            
+        requestPermission().then(() => {      
+            console.log("Permission granted and shaking is set to true.");
+        }).catch(err => {
+            console.error("Permission request failed", err);
+        });
+      setIsShaking(true);
     };
 
     const stopShaking = () => {
