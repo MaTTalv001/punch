@@ -7,28 +7,30 @@ function GameApp() {
     const [isShaking, setIsShaking] = useState(false);
 
     useEffect(() => {
+        let interval;
+        
         if (isShaking) {
-            console.log("Shaking started.");
-            const interval = setInterval(() => {
+            interval = setInterval(() => {
                 const shakePower = 50 * Math.sqrt(motion.x ** 2 + motion.y ** 2 + motion.z ** 2);
                 console.log(`Shake Power: ${shakePower} at x: ${motion.x}, y: ${motion.y}, z: ${motion.z}`);
                 setEnergy(prevEnergy => prevEnergy + shakePower);
             }, 100);
+        }
 
-            setTimeout(() => {
+        const timeout = setTimeout(() => {
+            if (isShaking) {
                 console.log("Shaking auto-stopped after 10 seconds.");
                 setIsShaking(false);
                 clearInterval(interval);
-            }, 10000);
-        }
-    }, [isShaking]); // motionを依存配列から外す
+            }
+        }, 10000);
 
-    useEffect(() => {
-        const handleMotionUpdate = () => {
-            console.log(`Motion updated: x=${motion.x}, y=${motion.y}, z=${motion.z}`);
+        return () => {
+            clearInterval(interval);
+            clearTimeout(timeout);
+            console.log("Cleanup done.");
         };
-        handleMotionUpdate();
-    }, [motion]); // motionの更新を追跡
+    }, [isShaking, motion.x, motion.y, motion.z]); // Update this line
 
     const startShaking = async () => {
         try {
@@ -56,6 +58,7 @@ function GameApp() {
 }
 
 export default GameApp;
+
 
 
 
