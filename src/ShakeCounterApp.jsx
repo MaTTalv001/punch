@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import useDeviceMotion from './useDeviceMotion';
 
 function ShakeCounterApp() {
@@ -8,18 +8,28 @@ function ShakeCounterApp() {
   const [isCountingShakes, setIsCountingShakes] = useState(false);
   const [lastShakeTime, setLastShakeTime] = useState(0);
   const [finalScore, setFinalScore] = useState(null);
+  const timerRef = useRef(null);
 
   useEffect(() => {
-    if (isCountingShakes && timeLeft > 0) {
-      const timer = setTimeout(() => {
-        setTimeLeft(timeLeft - 1);
+    if (isCountingShakes) {
+      timerRef.current = setInterval(() => {
+        setTimeLeft((prevTime) => {
+          if (prevTime > 0) {
+            return prevTime - 1;
+          } else {
+            clearInterval(timerRef.current);
+            setIsCountingShakes(false);
+            setFinalScore(shakeCount);
+            return 0;
+          }
+        });
       }, 1000);
-      return () => clearTimeout(timer);
-    } else if (timeLeft === 0) {
-      setIsCountingShakes(false);
-      setFinalScore(shakeCount);
     }
-  }, [isCountingShakes, timeLeft, shakeCount]);
+
+    return () => {
+      clearInterval(timerRef.current);
+    };
+  }, [isCountingShakes, shakeCount]);
 
   useEffect(() => {
     if (isCountingShakes) {
@@ -28,11 +38,11 @@ function ShakeCounterApp() {
       const currentTime = new Date().getTime();
 
       if (acceleration > 20 && currentTime - lastShakeTime > 500) {
-        setShakeCount(shakeCount + 1);
+        setShakeCount((prevCount) => prevCount + 1);
         setLastShakeTime(currentTime);
       }
     }
-  }, [motion, isCountingShakes, shakeCount, lastShakeTime]);
+  }, [motion, isCountingShakes, lastShakeTime]);
 
   const startCounting = () => {
     setFinalScore(null);
