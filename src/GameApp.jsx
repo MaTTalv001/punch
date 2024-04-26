@@ -8,18 +8,17 @@ function GameApp() {
     const [isShaking, setIsShaking] = useState(false);
 
     useEffect(() => {
-        let interval;
         if (isShaking) {
-            interval = setInterval(() => {
+            console.log("Shaking started."); // ログ出力: 振動開始
+            const interval = setInterval(() => {
                 const shakePower = Math.sqrt(motion.x ** 2 + motion.y ** 2 + motion.z ** 2);
-                console.log(`Shake Power: ${shakePower}`); // 加速度データを確認
-                if (shakePower > 1) { // スレッショルドを非常に低く設定
+                if (shakePower > 5) {
                     setEnergy(prevEnergy => prevEnergy + shakePower);
                 }
             }, 100);
 
             const timeout = setTimeout(() => {
-                console.log("Stopping shake detection due to timeout.");
+                console.log("Shaking auto-stopped after 10 seconds."); // ログ出力: 自動停止
                 clearInterval(interval);
                 setIsShaking(false);
             }, 10000);
@@ -27,14 +26,15 @@ function GameApp() {
             return () => {
                 clearInterval(interval);
                 clearTimeout(timeout);
+                console.log("Cleanup done."); // ログ出力: クリーンアップ完了
             };
         }
     }, [isShaking, motion]);
 
     const startShaking = () => {
         requestPermission().then(() => {
-            console.log("Permission granted, starting shake detection.");
             setIsShaking(true);
+            console.log("Permission granted and shaking is set to true."); // ログ出力: 許可取得と振動開始設定
         }).catch(err => {
             console.error("Permission request failed", err);
         });
@@ -42,6 +42,7 @@ function GameApp() {
 
     const stopShaking = () => {
         setIsShaking(false);
+        console.log("Shaking manually stopped."); // ログ出力: 手動での振動停止
     };
 
     const useEnergy = () => {
