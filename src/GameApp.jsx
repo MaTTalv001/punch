@@ -13,7 +13,7 @@ function GameApp() {
             interval = setInterval(() => {
                 const shakePower = Math.sqrt(motion.x ** 2 + motion.y ** 2 + motion.z ** 2);
                 console.log(`Shake Power: ${shakePower}`); // Debug to see shake power
-                if (shakePower > 0.1) { // Adjust this threshold based on testing
+                if (shakePower > 0) { // Adjust this threshold based on testing
                     setEnergy(prevEnergy => prevEnergy + shakePower);
                 }
             }, 100);
@@ -58,13 +58,14 @@ function GameApp() {
             <button onClick={stopShaking} disabled={!isShaking}>停止</button>
             <button onClick={useEnergy} disabled={energy <= 0}>必殺技発動！</button>
             <div>モンスターの体力: {monsterHealth}</div>
-            <div>蓄積エネルギー: {energy.toFixed(2)}</div>
-            <p>X軸の加速度: {motion.x?.toFixed(2) || 'Not available'}</p>
-            <p>Y軸の加速度: {motion.y?.toFixed(2) || 'Not available'}</p>
-            <p>Z軸の加速度: {motion.z?.toFixed(2) || 'Not available'}</p>
+            <div>蓄積エネルギー: {energy.toFixed(1)}</div>
+            <p>X軸の加速度: {motion.x?.toFixed(1) || 'Not available'}</p>
+            <p>Y軸の加速度: {motion.y?.toFixed(1) || 'Not available'}</p>
+            <p>Z軸の加速度: {motion.z?.toFixed(1) || 'Not available'}</p>
         </div>
     );
 }
 
 export default GameApp;
+
 
