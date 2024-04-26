@@ -13,7 +13,7 @@ function GameApp() {
             interval = setInterval(() => {
                 const shakePower = Math.sqrt(motion.x ** 2 + motion.y ** 2 + motion.z ** 2);
                 console.log(`Shake Power: ${shakePower}`); // Debug to see shake power
-                if (shakePower > 5) { // Adjust this threshold based on testing
+                if (shakePower > 0.1) { // Adjust this threshold based on testing
                     setEnergy(prevEnergy => prevEnergy + shakePower);
                 }
             }, 100);
