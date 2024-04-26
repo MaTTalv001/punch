@@ -4,10 +4,11 @@ import useDeviceMotion from './useDeviceMotion';
 function ShakeCounterApp() {
   const { motion, permissionGranted } = useDeviceMotion();
   const [shakeCount, setShakeCount] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(10);
+  const [timeLeft, setTimeLeft] = useState(5);
   const [isCountingShakes, setIsCountingShakes] = useState(false);
   const [lastShakeTime, setLastShakeTime] = useState(0);
   const [finalScore, setFinalScore] = useState(null);
+  const [countdownStarted, setCountdownStarted] = useState(false);
   const timerRef = useRef(null);
 
   useEffect(() => {
@@ -23,7 +24,7 @@ function ShakeCounterApp() {
             return 0;
           }
         });
-      }, 500);
+      }, 1000);
     }
 
     return () => {
@@ -37,7 +38,7 @@ function ShakeCounterApp() {
       const acceleration = Math.sqrt(x * x + y * y + z * z);
       const currentTime = new Date().getTime();
 
-      if (acceleration > 20 && currentTime - lastShakeTime > 100) {
+      if (acceleration > 20 && currentTime - lastShakeTime > 200) {
         setShakeCount((prevCount) => prevCount + 1);
         setLastShakeTime(currentTime);
       }
@@ -47,9 +48,12 @@ function ShakeCounterApp() {
   const startCounting = () => {
     setFinalScore(null);
     setShakeCount(0);
-    setTimeLeft(10);
-    setIsCountingShakes(true);
-    setLastShakeTime(0);
+    setTimeLeft(5);
+    setCountdownStarted(true);
+    setTimeout(() => {
+      setIsCountingShakes(true);
+      setLastShakeTime(0);
+    }, 5000);
   };
 
   if (!permissionGranted) {
@@ -73,8 +77,14 @@ function ShakeCounterApp() {
             </>
           ) : (
             <>
-              <p>10秒間でできるだけ多くシェイクしてください！</p>
-              <button onClick={startCounting}>スタート</button>
+              {countdownStarted ? (
+                <p>準備してください: {timeLeft}秒</p>
+              ) : (
+                <>
+                  <p>できるだけ長くシェイクし続けてください！</p>
+                  <button onClick={startCounting}>スタート</button>
+                </>
+              )}
             </>
           )}
         </>
