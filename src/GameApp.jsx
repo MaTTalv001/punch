@@ -9,32 +9,32 @@ function GameApp() {
 
     useEffect(() => {
         if (isShaking) {
-            console.log("Shaking started."); // ログ出力: 振動開始
+            console.log("Shaking started.");
             const interval = setInterval(() => {
-                const shakePower =50 * Math.sqrt(motion.x ** 2 + motion.y ** 2 + motion.z ** 2);
+                const shakePower = 50 * Math.sqrt(motion.x ** 2 + motion.y ** 2 + motion.z ** 2);
+                console.log(`Shake Power: ${shakePower}`);  // ログで振動の強さを出力
                 if (shakePower > 0.1) {
                     setEnergy(prevEnergy => prevEnergy + shakePower);
                 }
             }, 100);
 
             const timeout = setTimeout(() => {
-                console.log("Shaking auto-stopped after 10 seconds."); // ログ出力: 自動停止
-                clearInterval(interval);
-                setIsShaking(false);
+                console.log("Shaking auto-stopped after 10 seconds.");
+                setIsShaking(false);  // setTimeout内で状態を更新
             }, 10000);
 
             return () => {
                 clearInterval(interval);
                 clearTimeout(timeout);
-                console.log("Cleanup done."); // ログ出力: クリーンアップ完了
+                console.log("Cleanup done.");
             };
         }
-    }, [isShaking, motion]);
+    }, [isShaking]);  // motionを依存配列から除外
 
     const startShaking = () => {
         requestPermission().then(() => {
             setIsShaking(true);
-            console.log("Permission granted and shaking is set to true."); // ログ出力: 許可取得と振動開始設定
+            console.log("Permission granted and shaking is set to true.");
         }).catch(err => {
             console.error("Permission request failed", err);
         });
@@ -42,7 +42,7 @@ function GameApp() {
 
     const stopShaking = () => {
         setIsShaking(false);
-        console.log("Shaking manually stopped."); // ログ出力: 手動での振動停止
+        console.log("Shaking manually stopped.");
     };
 
     const useEnergy = () => {
@@ -56,7 +56,7 @@ function GameApp() {
     return (
         <div>
             <h1>モンスターバトル</h1>
-        <button onClick={startShaking} disabled={isShaking}>スマホを振る！</button>
+            <button onClick={startShaking} disabled={isShaking}>スマホを振る！</button>
             <button onClick={stopShaking} disabled={!isShaking}>停止</button>
             <button onClick={useEnergy} disabled={energy <= 0}>必殺技発動！</button>
             <div>モンスターの体力: {monsterHealth}</div>
