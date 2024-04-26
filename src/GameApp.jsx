@@ -1,5 +1,39 @@
 import React, { useState, useEffect } from 'react';
-import useDeviceMotion from './useDeviceMotion';
+
+function useDeviceMotion() {
+    const [motion, setMotion] = useState({ x: 0, y: 0, z: 0 });
+    const [permissionGranted, setPermissionGranted] = useState(false);
+
+    useEffect(() => {
+        function handleMotionEvent(event) {
+            setMotion({
+                x: event.accelerationIncludingGravity.x,
+                y: event.accelerationIncludingGravity.y,
+                z: event.accelerationIncludingGravity.z
+            });
+        }
+
+        if (permissionGranted) {
+            window.addEventListener('devicemotion', handleMotionEvent);
+            return () => window.removeEventListener('devicemotion', handleMotionEvent);
+        }
+    }, [permissionGranted]);
+
+    const requestPermission = async () => {
+        if (typeof DeviceMotionEvent.requestPermission === 'function') {
+            try {
+                const permissionState = await DeviceMotionEvent.requestPermission();
+                setPermissionGranted(permissionState === 'granted');
+            } catch (error) {
+                console.error('Permission request failed', error);
+            }
+        } else {
+            alert('DeviceMotionEvent.requestPermission is not supported on this device.');
+        }
+    };
+
+    return { motion, requestPermission };
+}
 
 function GameApp() {
     const { motion, requestPermission } = useDeviceMotion();
@@ -8,42 +42,27 @@ function GameApp() {
 
     useEffect(() => {
         let interval;
-        
         if (isShaking) {
             interval = setInterval(() => {
-                // 直接 motion を参照して shakePower を計算
                 const shakePower = 50 * Math.sqrt(motion.x ** 2 + motion.y ** 2 + motion.z ** 2);
                 console.log(`Shake Power: ${shakePower} at x: ${motion.x}, y: ${motion.y}, z: ${motion.z}`);
                 setEnergy(prevEnergy => prevEnergy + shakePower);
             }, 100);
-
-            const timeout = setTimeout(() => {
+            setTimeout(() => {
                 console.log("Shaking auto-stopped after 10 seconds.");
                 setIsShaking(false);
                 clearInterval(interval);
             }, 10000);
         }
-
-        return () => {
-            clearInterval(interval);
-            console.log("Cleanup done.");
-        };
-    }, [isShaking]); // ここに motion を含めない
+        return () => clearInterval(interval);
+    }, [isShaking, motion]);
 
     const startShaking = async () => {
-        try {
-            await requestPermission();
-            console.log("Permission granted and shaking is set to true.");
-            setIsShaking(true);
-        } catch (error) {
-            console.error("Permission request failed", error);
-        }
+        await requestPermission();
+        setIsShaking(true);
     };
 
-    const stopShaking = () => {
-        setIsShaking(false);
-        console.log("Shaking manually stopped.");
-    };
+    const stopShaking = () => setIsShaking(false);
 
     return (
         <div>
