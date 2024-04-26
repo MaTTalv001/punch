@@ -9,7 +9,9 @@ function ShakeCounterApp() {
   const [lastShakeTime, setLastShakeTime] = useState(0);
   const [finalScore, setFinalScore] = useState(null);
   const [countdownStarted, setCountdownStarted] = useState(false);
+  const [countdownTime, setCountdownTime] = useState(5);
   const timerRef = useRef(null);
+  const countdownRef = useRef(null);
 
   useEffect(() => {
     if (isCountingShakes) {
@@ -33,6 +35,28 @@ function ShakeCounterApp() {
   }, [isCountingShakes, shakeCount]);
 
   useEffect(() => {
+    if (countdownStarted) {
+      countdownRef.current = setInterval(() => {
+        setCountdownTime((prevTime) => {
+          if (prevTime > 1) {
+            return prevTime - 1;
+          } else {
+            clearInterval(countdownRef.current);
+            setCountdownStarted(false);
+            setIsCountingShakes(true);
+            setLastShakeTime(0);
+            return 0;
+          }
+        });
+      }, 1000);
+    }
+
+    return () => {
+      clearInterval(countdownRef.current);
+    };
+  }, [countdownStarted]);
+
+  useEffect(() => {
     if (isCountingShakes) {
       const { x, y, z } = motion;
       const acceleration = Math.sqrt(x * x + y * y + z * z);
@@ -49,11 +73,8 @@ function ShakeCounterApp() {
     setFinalScore(null);
     setShakeCount(0);
     setTimeLeft(5);
+    setCountdownTime(5);
     setCountdownStarted(true);
-    setTimeout(() => {
-      setIsCountingShakes(true);
-      setLastShakeTime(0);
-    }, 5000);
   };
 
   if (!permissionGranted) {
@@ -78,7 +99,7 @@ function ShakeCounterApp() {
           ) : (
             <>
               {countdownStarted ? (
-                <p>準備してください: {timeLeft}秒</p>
+                <p>準備してください: {countdownTime}秒</p>
               ) : (
                 <>
                   <p>できるだけ長くシェイクし続けてください！</p>
