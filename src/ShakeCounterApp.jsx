@@ -8,30 +8,26 @@ function ShakeCounterApp() {
   const [isCountingShakes, setIsCountingShakes] = useState(false);
   const [lastShakeTime, setLastShakeTime] = useState(0);
   const [finalScore, setFinalScore] = useState(null);
-  const startTimeRef = useRef(null);
-  const requestIdRef = useRef(null);
+  const timerRef = useRef(null);
 
   useEffect(() => {
     if (isCountingShakes) {
-      startTimeRef.current = performance.now();
-      const animate = (time) => {
-        const elapsedTime = Math.floor((time - startTimeRef.current) / 1000);
-        const remainingTime = 10 - elapsedTime;
-
-        if (remainingTime >= 0) {
-          setTimeLeft(remainingTime);
-          requestIdRef.current = requestAnimationFrame(animate);
-        } else {
-          setIsCountingShakes(false);
-          setFinalScore(shakeCount);
-        }
-      };
-
-      requestIdRef.current = requestAnimationFrame(animate);
+      timerRef.current = setInterval(() => {
+        setTimeLeft((prevTime) => {
+          if (prevTime > 0) {
+            return prevTime - 1;
+          } else {
+            clearInterval(timerRef.current);
+            setIsCountingShakes(false);
+            setFinalScore(shakeCount);
+            return 0;
+          }
+        });
+      }, 1000);
     }
 
     return () => {
-      cancelAnimationFrame(requestIdRef.current);
+      clearInterval(timerRef.current);
     };
   }, [isCountingShakes, shakeCount]);
 
@@ -39,7 +35,7 @@ function ShakeCounterApp() {
     if (isCountingShakes) {
       const { x, y, z } = motion;
       const acceleration = Math.sqrt(x * x + y * y + z * z);
-      const currentTime = performance.now();
+      const currentTime = new Date().getTime();
 
       if (acceleration > 20 && currentTime - lastShakeTime > 500) {
         setShakeCount((prevCount) => prevCount + 1);
