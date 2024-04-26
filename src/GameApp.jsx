@@ -13,7 +13,7 @@ function GameApp() {
             const interval = setInterval(() => {
                 const shakePower = 50 * Math.sqrt(motion.x ** 2 + motion.y ** 2 + motion.z ** 2);
               console.log(`Shake Power: ${shakePower}`);  // ログで振動の強さを出力
-              setEnergy(prevEnergy => prevEnergy + shakePower);
+              setEnergy(shakePower);
                 
             }, 100);
 
