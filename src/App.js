@@ -9,7 +9,7 @@ function App() {
     const alpha = 0.8; // 重力データの平滑化に使用する係数
 
     useEffect(() => {
-        // 重力データの平滑化を行う
+        // 重力データの平滑化を行う（低パスフィルタ）
         setGravity(g => ({
             x: alpha * g.x + (1 - alpha) * motion.x,
             y: alpha * g.y + (1 - alpha) * motion.y,
@@ -24,13 +24,13 @@ function App() {
         setIsMeasuring(prev => prev.map((item, idx) => idx === index ? true : item));
 
         const interval = setInterval(() => {
-            // 重力成分を除去した加速度を計算
+            // 重力成分を除去した加速度を計算（ハイパスフィルタ）
             const correctedAcceleration = {
                 x: motion.x - gravity.x,
                 y: motion.y - gravity.y,
                 z: motion.z - gravity.z
             };
-            const currentPower = 80 * Math.sqrt(correctedAcceleration.x ** 2 + correctedAcceleration.y ** 2 + correctedAcceleration.z ** 2);
+            const currentPower = Math.sqrt(correctedAcceleration.x ** 2 + correctedAcceleration.y ** 2 + correctedAcceleration.z ** 2);
             
             if (currentPower > maxPunchPower) {
                 maxPunchPower = currentPower;
