@@ -23,7 +23,7 @@ function ShakeCounterApp() {
             return 0;
           }
         });
-      }, 1000);
+      }, 500);
     }
 
     return () => {
@@ -37,7 +37,7 @@ function ShakeCounterApp() {
       const acceleration = Math.sqrt(x * x + y * y + z * z);
       const currentTime = new Date().getTime();
 
-      if (acceleration > 20 && currentTime - lastShakeTime > 500) {
+      if (acceleration > 20 && currentTime - lastShakeTime > 100) {
         setShakeCount((prevCount) => prevCount + 1);
         setLastShakeTime(currentTime);
       }
