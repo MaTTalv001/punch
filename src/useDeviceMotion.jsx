@@ -16,7 +16,7 @@ function useDeviceMotion() {
         if (permissionGranted) {
             setTimeout(() => { // 少し遅延を入れてからイベントリスナーを設定
                 window.addEventListener('devicemotion', handleMotionEvent);
-            }, 500);
+            }, 1000);
 
             return () => {
                 window.removeEventListener('devicemotion', handleMotionEvent);

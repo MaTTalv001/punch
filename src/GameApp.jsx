@@ -11,9 +11,11 @@ function GameApp() {
 
         if (isShaking) {
             interval = setInterval(() => {
-                const shakePower = 50 * Math.sqrt(motion.x ** 2 + motion.y ** 2 + motion.z ** 2);
-                console.log(`Shake Power: ${shakePower}`);
+                const shakePower = 100 * Math.sqrt(motion.x ** 2 + motion.y ** 2 + motion.z ** 2);
+              console.log(`Shake Power: ${shakePower}`);
+              if (shakePower > 10) {
                 setEnergy(prevEnergy => prevEnergy + shakePower);
+              }
             }, 100);
 
             setTimeout(() => {
