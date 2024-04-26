@@ -6,6 +6,7 @@ function ShakeCounterApp() {
   const [shakeCount, setShakeCount] = useState(0);
   const [timeLeft, setTimeLeft] = useState(10);
   const [isCountingShakes, setIsCountingShakes] = useState(false);
+  const [lastShakeTime, setLastShakeTime] = useState(0);
 
   useEffect(() => {
     if (isCountingShakes && timeLeft > 0) {
@@ -22,16 +23,20 @@ function ShakeCounterApp() {
     if (isCountingShakes) {
       const { x, y, z } = motion;
       const acceleration = Math.sqrt(x * x + y * y + z * z);
-      if (acceleration > 15) {
+      const currentTime = new Date().getTime();
+
+      if (acceleration > 20 && currentTime - lastShakeTime > 500) {
         setShakeCount(shakeCount + 1);
+        setLastShakeTime(currentTime);
       }
     }
-  }, [motion, isCountingShakes, shakeCount]);
+  }, [motion, isCountingShakes, shakeCount, lastShakeTime]);
 
   const startCounting = () => {
     setShakeCount(0);
     setTimeLeft(10);
     setIsCountingShakes(true);
+    setLastShakeTime(0);
   };
 
   if (!permissionGranted) {
