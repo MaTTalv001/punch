@@ -6,45 +6,40 @@ function GameApp() {
     const [energy, setEnergy] = useState(0);
     const [monsterHealth, setMonsterHealth] = useState(100);
     const [isShaking, setIsShaking] = useState(false);
-    const [timer, setTimer] = useState(null);
 
     useEffect(() => {
+        let interval;
         if (isShaking) {
-            const interval = setInterval(() => {
+            interval = setInterval(() => {
                 const shakePower = Math.sqrt(motion.x ** 2 + motion.y ** 2 + motion.z ** 2);
-                if (shakePower > 10) {
+                console.log(`Shake Power: ${shakePower}`); // Debug to see shake power
+                if (shakePower > 5) { // Adjust this threshold based on testing
                     setEnergy(prevEnergy => prevEnergy + shakePower);
                 }
             }, 100);
 
-            // 10秒後に自動的に振動計測を停止
             const timeout = setTimeout(() => {
+                console.log("Stopping shake detection due to timeout."); // Debug timeout
                 clearInterval(interval);
                 setIsShaking(false);
             }, 10000);
-
-            // タイマーをstateに保存して後でクリアできるようにする
-            setTimer({ interval, timeout });
 
             return () => {
                 clearInterval(interval);
                 clearTimeout(timeout);
             };
         }
-    }, [isShaking, motion]);
+    }, [isShaking, motion.x, motion.y, motion.z]); // Include motion values in dependency array
 
     const startShaking = () => {
         requestPermission().then(() => {
+            console.log("Permission granted, starting shake detection."); // Debug permission granted
             setIsShaking(true);
         });
     };
 
     const stopShaking = () => {
-        // 計測を手動で停止
-        if (timer) {
-            clearInterval(timer.interval);
-            clearTimeout(timer.timeout);
-        }
+        console.log("Manual stop of shake detection."); // Debug manual stop
         setIsShaking(false);
     };
 
@@ -59,8 +54,8 @@ function GameApp() {
     return (
         <div>
             <h1>モンスターバトル</h1>
-            <button onClick={startShaking}>スマホを振る！</button>
-            <button onClick={stopShaking}>停止</button>
+            <button onClick={startShaking} disabled={isShaking}>スマホを振る！</button>
+            <button onClick={stopShaking} disabled={!isShaking}>停止</button>
             <button onClick={useEnergy} disabled={energy <= 0}>必殺技発動！</button>
             <div>モンスターの体力: {monsterHealth}</div>
             <div>蓄積エネルギー: {energy.toFixed(2)}</div>
@@ -72,3 +67,4 @@ function GameApp() {
 }
 
 export default GameApp;
+
