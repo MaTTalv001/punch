@@ -36,7 +36,7 @@ function App() {
 
         let maxPunchPower = 0;
         const interval = setInterval(() => {
-            const currentPower = Math.sqrt(filteredAcceleration.x ** 2 + filteredAcceleration.y ** 2 + filteredAcceleration.z ** 2);
+            const currentPower = 100 * Math.sqrt(filteredAcceleration.x ** 2 + filteredAcceleration.y ** 2 + filteredAcceleration.z ** 2);
             if (currentPower > maxPunchPower) {
                 maxPunchPower = currentPower;
             }
