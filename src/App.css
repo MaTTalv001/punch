@@ -299,5 +299,15 @@ button:disabled {
 
 .modal-open {
   pointer-events: none;
-  /* モーダルが開いている間のみ背景のコンテンツが操作不可 */
+  /* モーダルが開いている間、背景のコンテンツの操作を不可にする */
+}
+
+.modal-backdrop {
+  pointer-events: auto;
+  /* モーダルのバックドロップは常に反応する */
+}
+
+.modal-content {
+  pointer-events: auto;
+  /* モーダルの内容も常に反応する */
 }
