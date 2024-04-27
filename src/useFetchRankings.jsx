@@ -20,7 +20,7 @@ const useFetchRankings = () => {
           .from('Ranking')
           .select('nickname, score')
           .order('score', { ascending: false })
-          .limit(20);
+          .limit(5);
 
         if (totalError) throw totalError;
 
@@ -31,7 +31,7 @@ const useFetchRankings = () => {
           .gte('created_at', todayStart.toISOString())  // 今日の始まり以降
           .lte('created_at', todayEnd.toISOString())  // 今日の終わりまで
           .order('score', { ascending: false })
-          .limit(20);
+          .limit(5);
 
         if (todaysError) throw todaysError;
 
