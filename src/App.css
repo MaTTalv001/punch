@@ -45,7 +45,7 @@
   justify-content: center;
   background-color: #282c34;
   color: white;
-  padding: 20px 0;
+  padding: 10px 0;
 }
 
 .game-screen {
@@ -53,7 +53,7 @@
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .background-container {
@@ -101,7 +101,7 @@ button {
 
 .App {
   margin-top: 20px;
-  padding: 10px 20px;
+  padding: 10px 10px;
   font-size: 18px;
 }
 
@@ -250,11 +250,16 @@ th {
 .button-group button {
   margin-right: 10px;
   padding: 8px 16px;
-  background-color: #007bff;
+  background-color: #006eff;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+}
+
+.App-header .button-group{
+  background-color: #282c34;
+  color: white;
 }
 
 .button-group .view-ranking-button {
@@ -270,4 +275,22 @@ th {
 button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
+}
+
+/* モーダル内のテーブルに適用するスタイル */
+.modal-content table,
+.modal-content th,
+.modal-content td {
+  color: white;
+  /* またはモーダルの背景色に適した色 */
+}
+
+.modal-content th {
+  background-color: #4a5568;
+  /* 濃いグレーの背景色 */
+}
+
+.modal-content td {
+  background-color: #2d3748;
+  /* やや薄いグレーの背景色 */
 }

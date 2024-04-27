@@ -138,6 +138,21 @@ function ShakeCounterApp() {
     setIsOpen(!isOpen);
   };
 
+  const post = {
+    title: "無限宇宙メテオストライクパンチ",
+    url: "https://punch-theta.vercel.app/",
+  };
+
+  const handleTweet = () => {
+    const tweetText = `【無限宇宙メテオストライクパンチ】${finalScore}ギガコスモのダメージを与えた！！ #無限宇宙メテオストライクパンチ #RUNTEQ `;
+    const twitterUrl = `https://twitter.com/share?url=${encodeURIComponent(
+      post.url
+    )}&text=${encodeURIComponent(tweetText)}`;
+
+    // 新しいタブでTwitter共有ページを開く
+    window.open(twitterUrl, "_blank");
+  };
+
   
 
 const restartGame = () => {
@@ -207,7 +222,14 @@ const restartGame = () => {
             </div>
             <div className="button-group">
               <button onClick={toggleModal} className="view-ranking-button">ランキングを見る</button>
-              <button onClick={restartGame} className="restart-button">もう一度</button>
+              
+              <button
+                onClick={handleTweet}
+                className="mx-2 bg-black hover:bg-black text-white font-bold py-2 px-4 rounded transition duration-150 ease-in-out"
+              >
+                <i className="fab fa-twitter"></i> Xにポスト
+                  </button>
+                  <button onClick={restartGame} className="restart-button">もう一度</button>
             </div>
             <Modal isOpen={isOpen} onClose={toggleModal}>
               <RankingsComponent />

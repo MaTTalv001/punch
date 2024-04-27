@@ -1,15 +1,23 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ShakeCounterApp from "./ShakeCounterApp";
 import RankingsComponent from "./RankingsComponent";
 import './App.css';
+import Modal from './Modal';
 
 function App() {
+    const [isOpen, setIsOpen] = useState(false);
+    const toggleModal = () => {
+    setIsOpen(!isOpen);
+  };
   return (
     <div className="App">
       <header className="App-header">
         <p className="smartphone-content">スマートフォン用コンテンツ</p>
         <h1>無限宇宙メテオストライクパンチ</h1>
-        <img src="/QR_CODE.png" alt="QR Code" className="qr-code" />
+              <img src="/QR_CODE.png" alt="QR Code" className="qr-code" />
+              <div className="button-group">
+                  <button onClick={toggleModal} className="view-ranking-button">ランキングを見る</button>
+                  </div>
       </header>
       <section className="instructions-section">
         <h2>ルール</h2>
@@ -29,7 +37,12 @@ function App() {
         </ul>
       </section>
           <ShakeCounterApp />
+
+        <Modal isOpen={isOpen} onClose={toggleModal}>
+        <RankingsComponent />
+        </Modal>
     </div>
+      
   );
 }
 
