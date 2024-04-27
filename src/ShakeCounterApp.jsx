@@ -189,8 +189,9 @@ const restartGame = () => {
             {gameState === 'countdown' && (
               <div className="message-box">
                 <h2>{countdownTime}秒後にチャージ開始します</h2>
-                <p>スマートフォンを激しくシェイクして力をためろ！</p>
-                <p>シェイクしている間は制限時間が減らないぞ！</p>
+                <p>How to Play</p>
+                <p>スマートフォンを激しくシェイクして力をためます</p>
+                <p>制限時間は3秒ですが、シェイクしている間は減りません。</p>
             
                 <h3>注意：周囲の安全を確かめてください </h3>
               </div>
