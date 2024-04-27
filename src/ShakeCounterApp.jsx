@@ -84,11 +84,11 @@ function ShakeCounterApp() {
 
   if (!permissionGranted) {
     return (
-      <div>
-        <p>加速度センサーへのアクセスを許可してください。</p>
-        <button onClick={requestPermission}>許可する</button>
-      </div>
-    );
+  <div>
+    <p>加速度センサーへのアクセスを許可してください。</p>
+    <button style={{ marginBottom: '20px' }} onClick={requestPermission}>許可する</button>
+  </div>
+);
   }
 
   const startCounting = () => {
