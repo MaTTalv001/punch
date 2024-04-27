@@ -77,7 +77,7 @@ function ShakeCounterApp() {
     setFinalScore(null);
     setShakeCount(0);
     setTimeLeft(3);
-    setCountdownTime(5);
+    setCountdownTime(10);
     setCountdownStarted(true);
     setGameState('countdown');
   };
@@ -102,27 +102,30 @@ function ShakeCounterApp() {
     <div className="message-container">
       {gameState === 'start' && (
         <div className="message-box">
-          <p>やべえやつが現れた！</p>
+          <h2>やべえやつが現れた！</h2>
           <p>どうする！？ヒーロー！！</p>
           <button onClick={startCounting}>力をためる</button>
         </div>
       )}
       {gameState === 'countdown' && (
-        <div className="message-box">
-          <p>スマートフォンを激しくシェイクして力をためます</p>
-          <p>周囲の安全を確かめてください: {countdownTime}秒</p>
+          <div className="message-box">
+            <h2>{countdownTime}秒後に開始します</h2>
+            <p>スマートフォンを激しくシェイクして力をためろ！</p>
+            <p>シェイクしている間は制限時間が減らないぞ！</p>
+            
+          <h3>注意：周囲の安全を確かめてください </h3>
         </div>
       )}
       {gameState === 'shake' && (
         <div className="message-box">
-          <p>残り時間: {timeLeft}秒</p>
+          <h2>残り時間: {timeLeft}秒</h2>
           <p>残り時間はシェイクしている限り減らない！！</p>
           <p>限界を超えろっっっ！！！</p>
         </div>
       )}
       {gameState === 'result' && (
         <div className="message-box">
-          <p>力がみなぎった！！</p>
+          <h2>力がみなぎった！！</h2>
           <button onClick={punchMonster}>無限宇宙メテオストライクパンチ！！</button>
         </div>
       )}
