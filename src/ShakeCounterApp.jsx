@@ -14,6 +14,7 @@ function ShakeCounterApp() {
   const [gameState, setGameState] = useState('start');
   const timerRef = useRef(null);
   const countdownRef = useRef(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     if (isCountingShakes) {
@@ -83,12 +84,18 @@ function ShakeCounterApp() {
   };
 
   const punchMonster = () => {
-    setGameState('punched');
+    setShowModal(true);
+    setTimeout(() => {
+      setShowModal(false);
+      setGameState('punched');
+    }, 2000);
   };
 
   if (!permissionGranted) {
     return <div>加速度センサーの使用許可が必要です。</div>;
   }
+
+  
 
 
   return (
@@ -96,7 +103,7 @@ function ShakeCounterApp() {
     <div className="game-screen">
       <div className="background-container">
         <img src="/bg.jpeg" alt="Background" className="background-image" />
-        <img src="/enemy01.PNG" alt="Enemy" className="enemy-image" />
+        <img src="/enemy01.PNG" alt="Enemy"  className={`enemy-image ${gameState === 'punched' ? 'hidden' : ''}`} />
       </div>
     </div>
     <div className="message-container">
@@ -109,7 +116,7 @@ function ShakeCounterApp() {
       )}
       {gameState === 'countdown' && (
           <div className="message-box">
-            <h2>{countdownTime}秒後に開始します</h2>
+            <h2>{countdownTime}秒後にチャージ開始します</h2>
             <p>スマートフォンを激しくシェイクして力をためろ！</p>
             <p>シェイクしている間は制限時間が減らないぞ！</p>
             
@@ -118,7 +125,7 @@ function ShakeCounterApp() {
       )}
       {gameState === 'shake' && (
         <div className="message-box">
-          <h2>残り時間: {timeLeft}秒</h2>
+          <h2>チャージ残り時間: {timeLeft}秒</h2>
           <p>残り時間はシェイクしている限り減らない！！</p>
           <p>限界を超えろっっっ！！！</p>
         </div>
@@ -129,9 +136,15 @@ function ShakeCounterApp() {
           <button onClick={punchMonster}>無限宇宙メテオストライクパンチ！！</button>
         </div>
       )}
+      {showModal && (
+        <div className="modal">
+          <img src="/punch.jpeg" alt="Punch" />
+        </div>
+      )}
       {gameState === 'punched' && (
         <div className="message-box">
-          <p>{finalScore}のダメージを与えた！！</p>
+            <h2>{finalScore}のダメージを与えた！！</h2>
+            <p>やべえやつをやっつけた</p>
           <button onClick={startCounting}>もう一度</button>
         </div>
       )}
