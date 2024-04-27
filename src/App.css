@@ -99,6 +99,12 @@ button {
   font-size: 18px;
 }
 
+.App {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 18px;
+}
+
 .qr-code {
   width: 100px;
   height: 100px;
@@ -165,4 +171,103 @@ button {
 
 .enemy-image.hidden {
   display: none;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+table,
+th,
+td {
+  border: 1px solid #ddd;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 8px;
+}
+
+th {
+  background-color: #282c34;
+}
+
+
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #282c34;
+  padding: 20px;
+  border-radius: 5px;
+  max-width: 500px;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  /* コンテンツを縦に並べる */
+}
+
+.close-button {
+  margin-top: auto;
+  /* 他の要素の下にボタンを配置 */
+  padding: 8px 16px;
+  border: none;
+  background-color: #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  align-self: center;
+  /* ボタンを中央に配置 */
+}
+
+.input-group,
+.button-group {
+  margin-top: 10px;
+}
+
+.nickname-input {
+  padding: 8px;
+  margin-right: 10px;
+  width: 200px;
+  /* または適切な幅 */
+  border: 2px solid #ccc;
+  border-radius: 4px;
+}
+
+.button-group button {
+  margin-right: 10px;
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.button-group .view-ranking-button {
+  background-color: #28a745;
+  /* 緑色 */
+}
+
+.button-group .restart-button {
+  background-color: #dc3545;
+  /* 赤色 */
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }

@@ -2,7 +2,7 @@ version: "3"
 services:
   app:
     build: .
-    image: interview_simulator
+    image: meteor_strike_punch
     ports:
       - "3000:3000"
     volumes:
@@ -10,8 +10,8 @@ services:
       - "/app/node_modules"
     environment:
       - NODE_ENV=development
-      - REACT_APP_SUPABASE_URL=${REACT_APP_SUPABASE_URL}
-      - REACT_APP_SUPABASE_ANON_KEY=${REACT_APP_SUPABASE_ANON_KEY}
+    env_file:
+      - .env.local
 networks:
   supabase_default:
     external: true

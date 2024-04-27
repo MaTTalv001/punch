@@ -1,5 +1,6 @@
 import React from 'react';
 import ShakeCounterApp from "./ShakeCounterApp";
+import RankingsComponent from "./RankingsComponent";
 import './App.css';
 
 function App() {
@@ -27,7 +28,7 @@ function App() {
           <li>必ず周囲の安全を確かめてプレイしてください</li>
         </ul>
       </section>
-      <ShakeCounterApp />
+          <ShakeCounterApp />
     </div>
   );
 }
