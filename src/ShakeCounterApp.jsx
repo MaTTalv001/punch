@@ -75,7 +75,7 @@ function ShakeCounterApp() {
       const acceleration = Math.sqrt(x * x + y * y + z * z);
       const currentTime = new Date().getTime();
 
-      if (acceleration > 30 && currentTime - lastShakeTime > 200) {
+      if (acceleration > 35 && currentTime - lastShakeTime > 200) {
         setShakeCount((prevCount) => prevCount + 1);
         setLastShakeTime(currentTime);
       }
