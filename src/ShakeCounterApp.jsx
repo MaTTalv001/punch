@@ -143,8 +143,8 @@ function ShakeCounterApp() {
       )}
       {gameState === 'punched' && (
         <div className="message-box">
-            <h2>{finalScore}のダメージを与えた！！</h2>
-            <p>やべえやつをやっつけた</p>
+            <h2>{finalScore}ギガコスモのダメージを与えた！！</h2>
+            <p>やべえやつはいなくなった</p>
           <button onClick={startCounting}>もう一度</button>
         </div>
       )}
