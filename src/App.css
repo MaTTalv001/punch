@@ -50,8 +50,8 @@
   flex: 1;
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 10px 10px;
+  align-items: flex-end;
+    padding-bottom: 20px;
 }
 
 .background-container {
