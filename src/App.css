@@ -280,6 +280,7 @@ button:disabled {
 }
 
 /* モーダル内のテーブルに適用するスタイル */
+.modal-content h1,
 .modal-content table,
 .modal-content th,
 .modal-content td {
