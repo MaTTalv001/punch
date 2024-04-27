@@ -297,3 +297,8 @@ button:disabled {
   /* やや薄いグレーの背景色 */
 }
 
+.App.active,
+.game-container.active {
+  pointer-events: auto;
+  /* モーダルが非表示のときは通常どおり操作可能 */
+}
