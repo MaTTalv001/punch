@@ -7,7 +7,7 @@ import RankingsComponent from './RankingsComponent';
 import Modal from './Modal';
 
 function ShakeCounterApp() {
-  const { motion, permissionGranted } = useDeviceMotion();
+  const { motion, permissionGranted, requestPermission } = useDeviceMotion();
   const [shakeCount, setShakeCount] = useState(0);
   const [timeLeft, setTimeLeft] = useState(5);
   const [isCountingShakes, setIsCountingShakes] = useState(false);
@@ -23,6 +23,7 @@ function ShakeCounterApp() {
   const [isRegistering, setIsRegistering] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [nicknameRegistered, setNicknameRegistered] = useState(false);
+
 
   useEffect(() => {
     if (isCountingShakes) {
@@ -81,6 +82,15 @@ function ShakeCounterApp() {
       }
     }
   }, [motion, isCountingShakes, lastShakeTime]);
+
+  if (!permissionGranted) {
+    return (
+      <div>
+        <p>加速度センサーへのアクセスを許可してください。</p>
+        <button onClick={requestPermission}>許可する</button>
+      </div>
+    );
+  }
 
   const startCounting = () => {
     setFinalScore(null);

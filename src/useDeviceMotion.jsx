@@ -19,10 +19,6 @@ function useDeviceMotion() {
       }
     };
 
-    requestPermission();
-  }, []);
-
-  useEffect(() => {
     const handleMotionEvent = (event) => {
       setMotion({
         x: event.accelerationIncludingGravity.x,
@@ -40,7 +36,18 @@ function useDeviceMotion() {
     };
   }, [permissionGranted]);
 
-  return { motion, permissionGranted };
+  const requestPermission = async () => {
+    if (typeof DeviceMotionEvent.requestPermission === 'function') {
+      try {
+        const permissionState = await DeviceMotionEvent.requestPermission();
+        setPermissionGranted(permissionState === 'granted');
+      } catch (error) {
+        console.error('Permission request failed', error);
+      }
+    }
+  };
+
+  return { motion, permissionGranted, requestPermission };
 }
 
 export default useDeviceMotion;
