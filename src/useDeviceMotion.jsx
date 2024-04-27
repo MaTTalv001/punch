@@ -1,4 +1,3 @@
-// useDeviceMotion.js
 import { useState, useEffect } from 'react';
 
 function useDeviceMotion() {
@@ -12,7 +11,7 @@ function useDeviceMotion() {
           const permissionState = await DeviceMotionEvent.requestPermission();
           setPermissionGranted(permissionState === 'granted');
         } catch (error) {
-          console.error('Permission request failed', error);
+          console.error('デバイスの許可を得られませんでした', error);
         }
       } else {
         setPermissionGranted(true);
@@ -37,15 +36,19 @@ function useDeviceMotion() {
   }, [permissionGranted]);
 
   const requestPermission = async () => {
-    if (typeof DeviceMotionEvent.requestPermission === 'function') {
-      try {
-        const permissionState = await DeviceMotionEvent.requestPermission();
-        setPermissionGranted(permissionState === 'granted');
-      } catch (error) {
-        console.error('Permission request failed', error);
-      }
+  if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+    try {
+      const permissionState = await DeviceMotionEvent.requestPermission();
+      setPermissionGranted(permissionState === 'granted');
+    } catch (error) {
+        console.error('デバイスの許可を得られませんでした', error);
+        alert('デバイスの許可を得られませんでした。'); 
     }
-  };
+  } else {
+      console.warn('加速度センサーに対応していないデバイスです');
+      alert('このデバイスは加速度センサーに対応していません。スマートフォンでアクセスしてください。');
+  }
+};
 
   return { motion, permissionGranted, requestPermission };
 }

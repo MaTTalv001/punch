@@ -10,14 +10,14 @@ function App() {
     setIsOpen(!isOpen);
   };
   return (
-    <div className={`App ${isOpen ? 'modal-open' : ''}`}>
-      <header className="App-header">
-        <p className="smartphone-content">スマートフォン用コンテンツ</p>
-        <h1>無限宇宙メテオストライクパンチ</h1>
+      <div className={`App ${isOpen ? 'modal-open' : ''}`}>
+          <header className="App-header">
+              <p className="smartphone-content">スマートフォン用コンテンツ</p>
+              <h1>無限宇宙メテオストライクパンチ</h1>
               <img src="/QR_CODE.png" alt="QR Code" className="qr-code" />
               <div className="button-group">
                   <button onClick={toggleModal} className="view-ranking-button">ランキングを見る</button>
-                  </div>
+              </div>
       </header>
       <section className="instructions-section">
         <h2>ルール</h2>

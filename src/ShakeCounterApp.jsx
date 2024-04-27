@@ -24,7 +24,6 @@ function ShakeCounterApp() {
   const [isOpen, setIsOpen] = useState(false);
   const [nicknameRegistered, setNicknameRegistered] = useState(false);
 
-
   useEffect(() => {
     if (isCountingShakes) {
       timerRef.current = setInterval(() => {
