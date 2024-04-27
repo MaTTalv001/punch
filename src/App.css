@@ -208,6 +208,8 @@ th {
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  pointer-events: auto;
+  /* モーダルが操作可能であることを確認 */
 }
 
 .modal-content {
@@ -294,3 +296,4 @@ button:disabled {
   background-color: #2d3748;
   /* やや薄いグレーの背景色 */
 }
+
