@@ -208,8 +208,7 @@ th {
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  pointer-events: auto;
-  /* モーダルが操作可能であることを確認 */
+  pointer-events: auto !important;
 }
 
 .modal-content {
@@ -299,16 +298,16 @@ button:disabled {
 }
 
 .modal-open {
-  pointer-events: none;
+  pointer-events: none !important;
   /* モーダルが開いている間、背景のコンテンツの操作を不可にする */
 }
 
 .modal-backdrop {
-  pointer-events: auto;
+  
   /* モーダルのバックドロップは常に反応する */
 }
 
 .modal-content {
-  pointer-events: auto;
+  pointer-events: auto !important;
   /* モーダルの内容も常に反応する */
 }
