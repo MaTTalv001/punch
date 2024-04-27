@@ -10,8 +10,7 @@ function App() {
     setIsOpen(!isOpen);
   };
   return (
-      <div className="App">
-          <div className={`game-container ${isOpen ? 'modal-open' : ''}`}>
+    <div className={`App ${isOpen ? 'modal-open' : ''}`}>
       <header className="App-header">
         <p className="smartphone-content">スマートフォン用コンテンツ</p>
         <h1>無限宇宙メテオストライクパンチ</h1>
@@ -41,8 +40,7 @@ function App() {
 
         <Modal isOpen={isOpen} onClose={toggleModal}>
         <RankingsComponent />
-              </Modal>
-              </div>
+        </Modal>
     </div>
       
   );

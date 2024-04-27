@@ -297,12 +297,6 @@ button:disabled {
   /* やや薄いグレーの背景色 */
 }
 
-.App.active,
-.game-container.active {
-  pointer-events: auto;
-  /* モーダルが非表示のときは通常どおり操作可能 */
-}
-
 .modal-open {
   pointer-events: none;
   /* モーダルが開いている間のみ背景のコンテンツが操作不可 */

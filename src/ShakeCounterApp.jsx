@@ -162,7 +162,7 @@ const restartGame = () => {
   
     return (
       <>
-        <div className="game-container">
+        <div className={`game-container ${isOpen ? 'modal-open' : ''}`}>
           <div className="game-screen">
             <div className="background-container">
               <img src="/bg.jpeg" alt="Background" className="background-image" />
