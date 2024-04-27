@@ -36,21 +36,26 @@ function useDeviceMotion() {
   }, [permissionGranted]);
 
   const requestPermission = async () => {
-  if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
-    try {
-      const permissionState = await DeviceMotionEvent.requestPermission();
-      setPermissionGranted(permissionState === 'granted');
-    } catch (error) {
+  if (typeof DeviceMotionEvent !== 'undefined') {
+    if (typeof DeviceMotionEvent.requestPermission === 'function') {
+      try {
+        const permissionState = await DeviceMotionEvent.requestPermission();
+        setPermissionGranted(permissionState === 'granted');
+      } catch (error) {
         console.error('デバイスの許可を得られませんでした', error);
-        alert('デバイスの許可を得られませんでした。'); 
+        alert('デバイスの許可を得られませんでした。');
+      }
+    } else {
+      // iOS以外の場合は、許可を求めずに直接permissionGrantedをtrueに設定
+      setPermissionGranted(true);
     }
   } else {
-      console.warn('加速度センサーに対応していないデバイスです');
-      alert('このデバイスは加速度センサーに対応していません。スマートフォンでアクセスしてください。');
+    console.warn('加速度センサーに対応していないデバイスです');
+    alert('このデバイスは加速度センサーに対応していません。スマートフォンでアクセスしてください。');
   }
 };
 
-  return { motion, permissionGranted, requestPermission };
+return { motion, permissionGranted, requestPermission };
 }
 
 export default useDeviceMotion;
