@@ -297,15 +297,10 @@ button:disabled {
   /* やや薄いグレーの背景色 */
 }
 
-.modal-open {
-  pointer-events: none !important;
-  /* モーダルが開いている間、背景のコンテンツの操作を不可にする */
+.modal-open>*:not(.modal-backdrop):not(.modal-content) {
+  pointer-events: none;
 }
 
-.modal-backdrop {
-  
-  /* モーダルのバックドロップは常に反応する */
-}
 
 .modal-content {
   pointer-events: auto !important;
