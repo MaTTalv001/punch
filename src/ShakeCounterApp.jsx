@@ -29,7 +29,7 @@ function ShakeCounterApp() {
             return 0;
           }
         });
-      }, 1000);
+      }, 500);
     }
 
     return () => {
@@ -52,7 +52,7 @@ function ShakeCounterApp() {
             return 0;
           }
         });
-      }, 500);
+      }, 1000);
     }
 
     return () => {
@@ -90,12 +90,20 @@ function ShakeCounterApp() {
     return <div>加速度センサーの使用許可が必要です。</div>;
   }
 
+
   return (
-    <div className="game-container">
-      <img src="/bg.jpeg" alt="Monster" className="monster-image" />
+  <div className="game-container">
+    <div className="game-screen">
+      <div className="background-container">
+        <img src="/bg.jpeg" alt="Background" className="background-image" />
+        <img src="/enemy01.PNG" alt="Enemy" className="enemy-image" />
+      </div>
+    </div>
+    <div className="message-container">
       {gameState === 'start' && (
         <div className="message-box">
-          <p>モンスターが現れた！</p>
+          <p>やべえやつが現れた！</p>
+          <p>どうする！？ヒーロー！！</p>
           <button onClick={startCounting}>力をためる</button>
         </div>
       )}
@@ -125,7 +133,8 @@ function ShakeCounterApp() {
         </div>
       )}
     </div>
-  );
+  </div>
+);
 }
 
 export default ShakeCounterApp;
