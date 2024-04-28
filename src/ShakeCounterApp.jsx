@@ -23,6 +23,14 @@ function ShakeCounterApp() {
   const [isRegistering, setIsRegistering] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [nicknameRegistered, setNicknameRegistered] = useState(false);
+  const imageNumbers = ['01', '02', '03'];
+  const [currentImage, setCurrentImage] = useState('');
+  // コンポーネントがマウントされた後にランダムな画像を選ぶ
+    useEffect(() => {
+        const randomIndex = Math.floor(Math.random() * imageNumbers.length);
+        const selectedImage = `/enemy${imageNumbers[randomIndex]}.PNG`;
+        setCurrentImage(selectedImage);
+    }, []);  // 依存配列が空なので、コンポーネントのマウント時にのみ実行されます。
 
   useEffect(() => {
     if (isCountingShakes) {
@@ -175,7 +183,11 @@ const restartGame = () => {
           <div className="game-screen">
             <div className="background-container">
               <img src="/bg.jpeg" alt="Background" className="background-image" />
-              <img src="/enemy01.PNG" alt="Enemy" className={`enemy-image ${gameState === 'punched' ? 'hidden' : ''}`} />
+              <img
+            src={currentImage}
+            alt="Enemy"
+            className={`enemy-image ${gameState === 'punched' ? 'hidden' : ''}`}
+        />
             </div>
           </div>
           <div className="message-container">
