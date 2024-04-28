@@ -35,7 +35,6 @@ function ShakeCounterApp() {
             setIsCountingShakes(false);
             setFinalScore(shakeCount);
             setGameState('result');
-            navigator.vibrate(200);
             return 0;
           }
         });
