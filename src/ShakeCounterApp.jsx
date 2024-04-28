@@ -154,7 +154,7 @@ function ShakeCounterApp() {
 
   const handleTweet = () => {
     const tweetText = `【無限宇宙メテオストライクパンチ】${finalScore}ギガコスモのダメージを与えた！！ #無限宇宙メテオストライクパンチ #RUNTEQ `;
-    const twitterUrl = `https://twitter.com/share?url=${encodeURIComponent(
+    const twitterUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(
       post.url
     )}&text=${encodeURIComponent(tweetText)}`;
 
