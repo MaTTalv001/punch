@@ -12,11 +12,12 @@ function App() {
   return (
       <div className={`App ${isOpen ? 'modal-open' : ''}`}>
           <header className="App-header">
-        <p className="campaign-announcement">御坂美琴生誕記念（非公式）</p>
+        <p className="campaign-announcement">御坂美琴生誕記念Ver.（非公式）</p>
         <p className="smartphone-content">スマートフォン用コンテンツ</p>
         <h1>
-          <span className="strikethrough">無限宇宙メテオストライクパンチ</span>
-          <span><p>とあるアプリの超電磁砲</p></span>
+          <span>無限宇宙</span>
+          
+          <span>超電磁砲(レールガン)</span>
         </h1>
         <img src="/QR_CODE.png" alt="QR Code" className="qr-code" />
         <div className="button-group">
