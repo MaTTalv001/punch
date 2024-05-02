@@ -23,7 +23,7 @@ function ShakeCounterApp() {
   const [isRegistering, setIsRegistering] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [nicknameRegistered, setNicknameRegistered] = useState(false);
-  const imageNumbers = ['01', '02', '03'];
+  const imageNumbers = ['01', '02', '03', '04','05'];
   const [currentImage, setCurrentImage] = useState('');
   // コンポーネントがマウントされた後にランダムな画像を選ぶ
     useEffect(() => {
