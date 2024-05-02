@@ -23,7 +23,7 @@ function ShakeCounterApp() {
   const [isRegistering, setIsRegistering] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [nicknameRegistered, setNicknameRegistered] = useState(false);
-  const imageNumbers = ['01', '02', '03'];
+  const imageNumbers = ['04', '05'];
   const [currentImage, setCurrentImage] = useState('');
   // コンポーネントがマウントされた後にランダムな画像を選ぶ
     useEffect(() => {
@@ -161,7 +161,7 @@ function ShakeCounterApp() {
   };
 
   const handleTweet = () => {
-    const tweetText = `【無限宇宙メテオストライクパンチ】${finalScore}ギガコスモのダメージを与えた！！ #無限宇宙メテオストライクパンチ #RUNTEQ `;
+    const tweetText = `【無限宇宙メテオストライクパンチ】${finalScore}のダメージを与えた！！ #無限宇宙メテオストライクパンチ #RUNTEQ `;
     const twitterUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(
       post.url
     )}&text=${encodeURIComponent(tweetText)}`;
@@ -194,7 +194,7 @@ const restartGame = () => {
             {gameState === 'start' && (
               <div className="message-box">
                 <h2>やべえやつが現れた！</h2>
-                <p>どうする！？ヒーロー！！</p>
+                <p>どうする！？レベル5！！</p>
                 <button onClick={startCounting}>力をためる</button>
               </div>
             )}
@@ -218,12 +218,12 @@ const restartGame = () => {
             {gameState === 'result' && (
               <div className="message-box">
                 <h2>力がみなぎった！！</h2>
-                <button onClick={punchMonster}>無限宇宙メテオストライクパンチ！！</button>
+                <button onClick={punchMonster}>超電磁砲（レールガン）！！</button>
               </div>
             )}
             {showModal && (
               <div className="modal">
-                <img src="/punch.jpeg" alt="Punch" />
+                <img src="/railgun.jpeg" alt="Punch" />
               </div>
             )}
             {gameState === 'punched' && (

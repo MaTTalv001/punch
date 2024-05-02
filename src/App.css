@@ -316,3 +316,15 @@ button:disabled {
   pointer-events: auto;
   touch-action: auto;
 }
+
+.strikethrough {
+  text-decoration: line-through;
+}
+
+.campaign-announcement {
+  color: #ff0000;
+  font-size: 1.5em;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
+}
